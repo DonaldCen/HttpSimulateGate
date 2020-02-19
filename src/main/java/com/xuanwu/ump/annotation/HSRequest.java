@@ -15,79 +15,54 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface HSRequest {
     /**
-     * <b>描述：</b> 名称<br/>
-     * <b>作者：</b>gz <br/>
-     *
-     * @return
+     * 名称
      */
     public String name();
 
     /**
-     * <b>描述：</b> 请求路径<br/>
-     * <b>作者：</b>gz <br/>
-     *
-     * @return
+     * 请求路径
      */
     public String url();
 
+    public ContentType contentType() default ContentType.JSON;
+
     /**
-     * <b>描述：</b> 返回值类型：默认普通文本<br/>
-     * <b>作者：</b>gz <br/>
-     *
-     * @return
+     * 返回值类型：默认普通文本
      */
     public ResponseType responseType() default ResponseType.TEXT;
 
     /**
-     * <b>描述：</b> 请求方式<br/>
-     * <b>作者：</b>gz <br/>
-     *
-     * @return
+     * 请求方式
      */
     public MethodType method() default MethodType.GET;
 
     /**
-     * <b>描述：</b> 描述<br/>
-     * <b>作者：</b>gz <br/>
-     *
-     * @return
+     * 描述
      */
     public String description() default "";
 
     /**
-     * <b>描述：</b> 参数列表<br/>
-     * <b>作者：</b>gz <br/>
-     *
-     * @return
+     * 参数列表
      */
     public Parameter[] parameters() default {};
 
     /**
-     * <b>描述：</b> 头部列表<br/>
-     * <b>作者：</b>gz <br/>
-     *
-     * @return
+     * 头部列表
      */
     public Header[] headers() default {};
 
     /**
      * 请求编码
-     *
-     * @return
      */
     public String charset() default "";
 
     /**
      * 返回值类型，用于自动解析
-     *
-     * @return
      */
     public Class<?> resultClass() default String.class;
 
     /**
-     * <b>描述：</b> 返回值类型：根据类型自动解析结果<br/>
-     * <b>作者：</b> gz <br/>
-     * <b>创建时间：</b> 2015-10-13 下午01:26:41 <br/>
+     * 返回值类型：根据类型自动解析结果
      */
     enum ResponseType {
         /**
@@ -113,13 +88,44 @@ public @interface HSRequest {
     }
 
     /**
-     * <b>描述：</b> 请求方式<br/>
-     * <b>作者：</b> gz <br/>
-     * <b>创建时间：</b> 2015-10-13 下午01:26:57 <br/>
+     * 请求方式
      */
     enum MethodType {
         GET,
         POST,
         DELETE
+    }
+
+    /**
+     * 常见 Content Type
+     */
+    enum ContentType {
+        XML(0,"application/xml"),
+        JSON(1,"application/json"),
+        FROM_URL_ENCODE(2,"application/x-www-form-urlencoded"),
+        FROM_DATA(3,"multipart/form-data")
+        ;
+        private ContentType(int index,String contentType){
+            this.index = index;
+            this.contentType = contentType;
+        }
+        private int index;
+        private String contentType;
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public String getContentType() {
+            return contentType;
+        }
+
+        public void setContentType(String contentType) {
+            this.contentType = contentType;
+        }
     }
 }

@@ -71,9 +71,7 @@ public @interface Parameter {
     public String validateRegex() default "";
 
     /**
-     * <b>描述：</b> 类型<br/>
-     * <b>作者：</b> gz <br/>
-     * <b>创建时间：</b> 2015-10-12 下午01:50:21 <br/>
+     * 类型
      */
     enum Type {
         STRING,

@@ -36,6 +36,9 @@ public abstract class HSAnnotationHttpRequest extends HSAbstractHttpRequest {
             if (context.getMethod() == null) {
                 context.setMethod(ann.method());
             }
+            if(context.getContentType() == null){
+                context.setContentType(ann.contentType());
+            }
 
             String charset = ann.charset();
             if (StringUtils.isEmpty(charset)) {

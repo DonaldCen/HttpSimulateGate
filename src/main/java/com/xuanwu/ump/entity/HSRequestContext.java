@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.xuanwu.ump.annotation.HSRequest.ContentType;
 import com.xuanwu.ump.annotation.HSRequest.MethodType;
 import com.xuanwu.ump.annotation.HSRequest.ResponseType;
 
@@ -42,6 +43,8 @@ public class HSRequestContext {
      * 请求方法
      */
     private MethodType method;
+
+    private ContentType contentType;
     /**
      * 相应类型
      */
@@ -137,6 +140,15 @@ public class HSRequestContext {
 
     public HSRequestContext setMethod(MethodType method) {
         this.method = method;
+        return this;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public HSRequestContext setContentType(ContentType type){
+        this.contentType = type;
         return this;
     }
 

@@ -66,81 +66,79 @@ public abstract class HSHttpAbstractClient {
         List<NameValuePair> nvps = context.getNameValuePairList();
         String url = context.getUrl();
         if (context.getMethod() == HSRequest.MethodType.GET) {
-            this.httpRequest = new HttpGet(url);
-            String str = null;
-            try {
-                if (nvps != null) {
-                    str = EntityUtils.toString(new UrlEncodedFormEntity(nvps, context.getCharset()));
-                    String doc = "?";
-                    if (context.getUrl().indexOf("?") != -1) {
-                        doc = "&";
-                    }
-                    url += doc + str;
-                    //context.setUrl(url);
-                    this.httpRequest.setURI(new URI(url));
-                }
-            } catch (Exception e) {
-                throw new Exception(e);
-            }
+            dealWithGetRequest(url,nvps);
         } else if (context.getMethod() == HSRequest.MethodType.POST) {
-            HttpPost post = new HttpPost(url);
-            post.setHeader("ContentType", "application/x-www-form-urlencoded");
-
-            Map<String, Object> multipartDataMap = context.getMultipartDataMap();
-            try {
-                // 文件上传
-                if (multipartDataMap != null && !multipartDataMap.isEmpty()) {
-                    log.debug("文件上传");
-                    Set<String> keySet = multipartDataMap.keySet();
-                    MultipartEntity entity = new MultipartEntity();
-                    for (String key : keySet) {
-                        Object obj = multipartDataMap.get(key);
-                        if (obj instanceof File) {
-                            FileBody fileBody = new FileBody((File) obj);
-                            entity.addPart(key, fileBody);
-                        } else if (obj instanceof String) {
-                            StringBody stringBody = new StringBody(String.valueOf(obj));
-                            entity.addPart(key, stringBody);
-                        }
-                    }
-                    if (nvps != null && !nvps.isEmpty()) {
-                        for (NameValuePair nvp : nvps) {
-                            StringBody stringBody = new StringBody(nvp.getValue());
-                            entity.addPart(nvp.getName(), stringBody);
-                        }
-                    }
-                    post.setEntity(entity);
-                }
-                // 普通提交
-                else {
-                    UrlEncodedFormEntity entry = new UrlEncodedFormEntity(nvps, context.getCharset());
-                    entry.setContentType("application/x-www-form-urlencoded;charset=" + context.getCharset());
-                    post.setEntity(entry);
-                }
-                this.httpRequest = post;
-            } catch (UnsupportedEncodingException e) {
-                throw new Exception(e);
-            }
-        } else if (context.getMethod() == HSRequest.MethodType.DELETE) {
-            this.httpRequest = new HttpDelete(url);
-            String str = null;
-            try {
-                if (nvps != null) {
-                    str = EntityUtils.toString(new UrlEncodedFormEntity(nvps, context.getCharset()));
-                    String doc = "?";
-                    if (context.getUrl().indexOf("?") != -1) {
-                        doc = "&";
-                    }
-                    url += doc + str;
-                    log.debug(url);
-                    //context.setUrl(url);
-                    this.httpRequest.setURI(new URI(url));
-                }
-            } catch (Exception e) {
-                throw new Exception(e);
-            }
+            dealWithPostRequest(url,nvps);
+        } else {
+            throw new Exception("暂时不支持其他 methodType="+context.getMethod());
         }
         // 添加head
+        addHeader();
+        // 添加cookie
+        addCookie();
+    }
+
+    private void dealWithGetRequest(String url,List<NameValuePair> nvps) throws Exception {
+        this.httpRequest = new HttpGet(url);
+        String str = null;
+        try {
+            if (nvps != null) {
+                str = EntityUtils.toString(new UrlEncodedFormEntity(nvps, context.getCharset()));
+                String doc = "?";
+                if (context.getUrl().indexOf("?") != -1) {
+                    doc = "&";
+                }
+                url += doc + str;
+                //context.setUrl(url);
+                this.httpRequest.setURI(new URI(url));
+            }
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+    }
+
+    private void dealWithPostRequest(String url,List<NameValuePair> nvps) throws Exception {
+        HttpPost post = new HttpPost(url);
+        post.setHeader("ContentType", context.getContentType().getContentType());
+
+        Map<String, Object> multipartDataMap = context.getMultipartDataMap();
+        try {
+            // 文件上传
+            if (multipartDataMap != null && !multipartDataMap.isEmpty()) {
+                log.debug("文件上传");
+                Set<String> keySet = multipartDataMap.keySet();
+                MultipartEntity entity = new MultipartEntity();
+                for (String key : keySet) {
+                    Object obj = multipartDataMap.get(key);
+                    if (obj instanceof File) {
+                        FileBody fileBody = new FileBody((File) obj);
+                        entity.addPart(key, fileBody);
+                    } else if (obj instanceof String) {
+                        StringBody stringBody = new StringBody(String.valueOf(obj));
+                        entity.addPart(key, stringBody);
+                    }
+                }
+                if (nvps != null && !nvps.isEmpty()) {
+                    for (NameValuePair nvp : nvps) {
+                        StringBody stringBody = new StringBody(nvp.getValue());
+                        entity.addPart(nvp.getName(), stringBody);
+                    }
+                }
+                post.setEntity(entity);
+            }
+            // 普通提交
+            else {
+                UrlEncodedFormEntity entry = new UrlEncodedFormEntity(nvps, context.getCharset());
+                entry.setContentType("application/x-www-form-urlencoded;charset=" + context.getCharset());
+                post.setEntity(entry);
+            }
+            this.httpRequest = post;
+        } catch (UnsupportedEncodingException e) {
+            throw new Exception(e);
+        }
+    }
+
+    private void addHeader(){
         Map<String, String> headerMap = context.getHeaderMap();
         if (!headerMap.isEmpty()) {
             Set<String> keySet = headerMap.keySet();
@@ -148,7 +146,9 @@ public abstract class HSHttpAbstractClient {
                 this.httpRequest.addHeader(key, headerMap.get(key));
             }
         }
-        // 添加cookie
+    }
+
+    private void addCookie(){
         Map<String, String> cookieMap = context.getCookieMap();
         if (!cookieMap.isEmpty()) {
             Set<String> keySet = cookieMap.keySet();
