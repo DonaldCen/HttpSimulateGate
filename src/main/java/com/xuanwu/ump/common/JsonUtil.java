@@ -10,8 +10,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * JSON转换工具类
- * Created by Administrator on 15-12-17.
+ * @Description
+ * @Author <a href="mailto:cenyingqiang@wxchina.com">yingqiang.Cen</a>
+ * @Date 2020/2/18
+ * @Version 1.0.0
  */
 public class JsonUtil {
 

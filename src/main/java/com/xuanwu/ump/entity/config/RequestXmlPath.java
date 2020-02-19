@@ -3,7 +3,10 @@ package com.xuanwu.ump.entity.config;
 import java.util.Map;
 
 /**
- * Created by Administrator on 15-12-30.
+ * @Description
+ * @Author <a href="mailto:cenyingqiang@wxchina.com">yingqiang.Cen</a>
+ * @Date 2020/2/18
+ * @Version 1.0.0
  */
 public class RequestXmlPath extends HSHttpHelperConfigData {
     public RequestXmlPath(Map<String, Object> data) {

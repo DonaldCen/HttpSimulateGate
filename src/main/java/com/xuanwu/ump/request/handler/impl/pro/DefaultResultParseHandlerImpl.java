@@ -5,7 +5,6 @@ import com.xuanwu.ump.annotation.HSRequest;
 import com.xuanwu.ump.common.JsonUtil;
 import com.xuanwu.ump.entity.HSRequestContext;
 import com.xuanwu.ump.entity.ResponseResult;
-import com.xuanwu.ump.exception.HSException;
 import com.xuanwu.ump.request.handler.ResponseProHandler;
 
 /**
@@ -19,7 +18,7 @@ public class DefaultResultParseHandlerImpl implements ResponseProHandler {
      * 响应后处理
      */
     @Override
-    public ResponseResult handler(HSRequestContext context, ResponseResult result) throws HSException {
+    public ResponseResult handler(HSRequestContext context, ResponseResult result) throws Exception {
         // 解析结果,只解析JSON
         if (context.getResponseType() == HSRequest.ResponseType.JSON) {
             String json = result.getBody().toString();

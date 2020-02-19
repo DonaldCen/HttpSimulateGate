@@ -5,7 +5,6 @@ import com.xuanwu.ump.annotation.Parameter;
 import com.xuanwu.ump.entity.ErrorMessage;
 import com.xuanwu.ump.entity.HSRequestContext;
 import com.xuanwu.ump.entity.ParameterDefine;
-import com.xuanwu.ump.exception.HSException;
 import com.xuanwu.ump.request.handler.RequestPreHandler;
 
 
@@ -27,7 +26,7 @@ public class DefaultValidationHandlerImpl implements RequestPreHandler {
      * @return 是否继续运行
      */
     @Override
-    public boolean handler(HSRequestContext context) throws HSException {
+    public boolean handler(HSRequestContext context) throws Exception {
         List<ParameterDefine> parameterDefineList = context.getParameterDefineList();
         if (parameterDefineList != null) {
             for (ParameterDefine parameterDefine : parameterDefineList) {

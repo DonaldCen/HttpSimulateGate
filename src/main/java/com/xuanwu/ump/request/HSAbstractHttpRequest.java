@@ -1,10 +1,11 @@
 package com.xuanwu.ump.request;
 
 import com.xuanwu.ump.common.MapKeyComparator;
+import com.xuanwu.ump.entity.ErrorMessage;
 import com.xuanwu.ump.entity.HSRequestContext;
 import com.xuanwu.ump.entity.ParameterDefine;
 import com.xuanwu.ump.entity.ResponseResult;
-import com.xuanwu.ump.exception.HSException;
+import com.xuanwu.ump.http.HSHttpTaskExecutor;
 import com.xuanwu.ump.request.handler.RequestPreHandler;
 import com.xuanwu.ump.request.handler.ResponseProHandler;
 
@@ -37,7 +38,7 @@ public abstract class HSAbstractHttpRequest implements HSHttpRequest {
     /**
      * 构建上下文
      */
-    protected abstract HSRequestContext builderContext() throws HSException;
+    protected abstract HSRequestContext builderContext() throws Exception;
 
     /**
      * 初始化。设置默认值。
@@ -45,7 +46,7 @@ public abstract class HSAbstractHttpRequest implements HSHttpRequest {
      * @param context 请求上下文。
      */
     @Override
-    public abstract void init(HSRequestContext context) throws HSException;
+    public abstract void init(HSRequestContext context) throws Exception;
 
     /**
      * 执行请求。
@@ -53,18 +54,56 @@ public abstract class HSAbstractHttpRequest implements HSHttpRequest {
      * @return 响应结果。
      */
     @Override
-    public ResponseResult execute() throws HSException {
+    public ResponseResult execute() throws Exception {
         ResponseResult result = null;
-
-        return null;
+        if (!preRequest()) {
+            // 出现错误：获取错误消息并返回
+            result = new ResponseResult();
+            result.setStatus(999);
+            List<ErrorMessage> errorMessageList = context.getErrorMessageList();
+            StringBuffer error = new StringBuffer();
+            for (ErrorMessage message : errorMessageList) {
+                error.append(message);
+            }
+            result.setBody(error.toString());
+            return result;
+        }
+        // 执行请求
+        String uuid = HSHttpTaskExecutor.getInstance().execute(context);
+        // 获取执行结果
+        result = HSHttpTaskExecutor.getInstance().getResult(uuid);
+        // 执行后处理
+        Set<Integer> proKeySet = responseProHandlerListMap.keySet();
+        // 从小到大以此执行
+        for (Integer key : proKeySet) {
+            List<ResponseProHandler> list = responseProHandlerListMap.get(key);
+            if (list != null) {
+                for (ResponseProHandler handler : list) {
+                    result = handler.handler(context, result);
+                }
+            }
+        }
+        // 清楚缓存
+        clear();
+        return result;
     }
 
     /**
      * 异步请求
      */
     @Override
-    public void asyncExecute() throws HSException {
-
+    public void asyncExecute() throws Exception {
+        if (!preRequest()) {
+            // 出现错误：获取错误消息并返回
+            List<ErrorMessage> errorMessageList = context.getErrorMessageList();
+            StringBuffer error = new StringBuffer();
+            for (ErrorMessage message : errorMessageList) {
+                error.append(message);
+            }
+            throw new Exception(error.toString());
+        }
+        HSHttpTaskExecutor.getInstance().asyncExecute(context, responseProHandlerListMap);
+        requestPreHandlerListMap.clear();
     }
 
     /**
@@ -72,7 +111,18 @@ public abstract class HSAbstractHttpRequest implements HSHttpRequest {
      */
     @Override
     public void addRequestPreHandler(RequestPreHandler handler) {
-
+        if (handler == null) {
+            return;
+        }
+        int level = handler.level();
+        if (requestPreHandlerListMap.containsKey(level)) {
+            List<RequestPreHandler> list = requestPreHandlerListMap.get(level);
+            list.add(handler);
+        } else {
+            List<RequestPreHandler> list = new ArrayList<RequestPreHandler>();
+            list.add(handler);
+            requestPreHandlerListMap.put(level, list);
+        }
     }
 
     /**
@@ -80,7 +130,18 @@ public abstract class HSAbstractHttpRequest implements HSHttpRequest {
      */
     @Override
     public void addResponseProHandler(ResponseProHandler handler) {
-
+        if (handler == null) {
+            return;
+        }
+        int level = handler.level();
+        if (responseProHandlerListMap.containsKey(level)) {
+            List<ResponseProHandler> list = responseProHandlerListMap.get(level);
+            list.add(handler);
+        } else {
+            List<ResponseProHandler> list = new ArrayList<ResponseProHandler>();
+            list.add(handler);
+            responseProHandlerListMap.put(level, list);
+        }
     }
 
     /**
@@ -91,7 +152,8 @@ public abstract class HSAbstractHttpRequest implements HSHttpRequest {
      */
     @Override
     public void addParameter(String name, Object value) {
-
+        parameterDefineList.add(new ParameterDefine(name));
+        inputData.put(name, value);
     }
 
     /**
@@ -99,7 +161,7 @@ public abstract class HSAbstractHttpRequest implements HSHttpRequest {
      */
     @Override
     public void addHeader(String name, String value) {
-
+        headerMap.put(name, value);
     }
 
     /**
@@ -107,27 +169,44 @@ public abstract class HSAbstractHttpRequest implements HSHttpRequest {
      */
     @Override
     public void addCookie(String name, String value) {
-
+        cookieMap.put(name, value);
     }
 
     /**
      * 获取请求上下文。
      */
     @Override
-    public HSRequestContext getContext() throws HSException {
-        return null;
+    public HSRequestContext getContext() throws Exception {
+        if (context == null) {
+            context = builderContext();
+        }
+        return context;
     }
 
-    private boolean preRequest() throws HSException {
+    private boolean preRequest() throws Exception {
         // 添加用户手动添加的数据
         addUserData();
         // 初始化
         init(context);
-
-        return false;
+        // 请求处理
+        defaultHandlerInit();
+        // 执行前处理
+        Set<Integer> preKeySet = requestPreHandlerListMap.keySet();
+        // 从小到大以此执行
+        for (Integer key : preKeySet) {
+            List<RequestPreHandler> list = requestPreHandlerListMap.get(key);
+            if (list != null) {
+                for (RequestPreHandler handler : list) {
+                    if (!handler.handler(context)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
-    private void addUserData() throws HSException {
+    private void addUserData() throws Exception {
         if (context == null) {
             context = builderContext();
         }
@@ -157,7 +236,20 @@ public abstract class HSAbstractHttpRequest implements HSHttpRequest {
     /**
      * 初始化默认处理器
      */
-    private void defaultHandlerInit() throws HSException {
+    private void defaultHandlerInit() throws Exception {
+        List<RequestPreHandler> defaultPreHandlers = HSHttpHelperXmlConfig.getInstance().getDefaultPreHandlers();
+        for (RequestPreHandler requestPreHandler : defaultPreHandlers) {
+            addRequestPreHandler(requestPreHandler);
+        }
+        List<ResponseProHandler> defaultProHandlers = HSHttpHelperXmlConfig.getInstance().getDefaultProHandlers();
+        for (ResponseProHandler responseProHandler : defaultProHandlers) {
+            addResponseProHandler(responseProHandler);
+        }
+    }
 
+    private void clear() {
+        this.context.clear();
+        requestPreHandlerListMap.clear();
+        responseProHandlerListMap.clear();
     }
 }

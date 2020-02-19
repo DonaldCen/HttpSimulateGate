@@ -1,27 +1,30 @@
 package com.xuanwu.ump.entity.config;
 
+import com.xuanwu.ump.annotation.HSRequest;
+import com.xuanwu.ump.annotation.Parameter;
+import com.xuanwu.ump.entity.HSRequestContext;
+import com.xuanwu.ump.entity.ParameterDefine;
+import com.xuanwu.ump.request.HSHttpHelperXmlConfig;
+
 import org.apache.commons.lang.StringUtils;
-import org.ws.httphelper.WSHttpHelperXmlConfig;
-import org.ws.httphelper.annotation.Parameter;
-import org.ws.httphelper.annotation.WSRequest;
-import org.ws.httphelper.exception.WSException;
-import org.ws.httphelper.model.ParameterDefine;
-import org.ws.httphelper.model.WSRequestContext;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Administrator on 15-12-30.
+ * @Description
+ * @Author <a href="mailto:cenyingqiang@wxchina.com">yingqiang.Cen</a>
+ * @Date 2020/2/18
+ * @Version 1.0.0
  */
 public class RequestConfigData extends HSHttpHelperConfigData {
     public RequestConfigData(Map<String, Object> data) {
         super(data);
     }
 
-    public WSRequestContext getContext() throws WSException {
-        WSRequestContext context = new WSRequestContext();
+    public HSRequestContext getContext() throws Exception {
+        HSRequestContext context = new HSRequestContext();
         if (!StringUtils.isEmpty(getValue("name"))) {
             context.setName(getValue("name"));
         }
@@ -29,7 +32,7 @@ public class RequestConfigData extends HSHttpHelperConfigData {
             context.setUrl(getValue("url"));
         }
         if (StringUtils.isEmpty(getValue("charset"))) {
-            context.setCharset(WSHttpHelperXmlConfig.getInstance().getHttpClientConfig().getHttpCharset());
+            context.setCharset(HSHttpHelperXmlConfig.getInstance().getHttpClientConfig().getHttpCharset());
         } else {
             context.setCharset(getValue("charset"));
         }
@@ -38,23 +41,23 @@ public class RequestConfigData extends HSHttpHelperConfigData {
         }
         String responseType = getValue("response-type");
         if (!StringUtils.isEmpty(responseType)) {
-            for (WSRequest.ResponseType type : WSRequest.ResponseType.values()) {
+            for (HSRequest.ResponseType type : HSRequest.ResponseType.values()) {
                 if (type.name().equals(responseType)) {
                     context.setResponseType(type);
                 }
             }
         } else {
-            context.setResponseType(WSRequest.ResponseType.HTML);
+            context.setResponseType(HSRequest.ResponseType.HTML);
         }
         String method = getValue("method");
         if (!StringUtils.isEmpty(method)) {
-            for (WSRequest.MethodType type : WSRequest.MethodType.values()) {
+            for (HSRequest.MethodType type : HSRequest.MethodType.values()) {
                 if (type.name().equals(method)) {
                     context.setMethod(type);
                 }
             }
         } else {
-            context.setMethod(WSRequest.MethodType.GET);
+            context.setMethod(HSRequest.MethodType.GET);
         }
         if(this.data.containsKey("parameters")){
             Object parameters=  getObject("parameters:parameter");

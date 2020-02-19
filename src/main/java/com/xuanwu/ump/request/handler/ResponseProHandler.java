@@ -2,7 +2,6 @@ package com.xuanwu.ump.request.handler;
 
 import com.xuanwu.ump.entity.HSRequestContext;
 import com.xuanwu.ump.entity.ResponseResult;
-import com.xuanwu.ump.exception.HSException;
 
 /**
  * @Description 响应后处理类
@@ -14,7 +13,7 @@ public interface ResponseProHandler {
     /**
      * 响应后处理
      */
-    public ResponseResult handler(HSRequestContext context, ResponseResult result) throws HSException;
+    public ResponseResult handler(HSRequestContext context, ResponseResult result) throws Exception;
 
     /**
      * 执行级别：小的优先执行

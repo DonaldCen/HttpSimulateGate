@@ -1,7 +1,6 @@
 package com.xuanwu.ump.request.handler;
 
 import com.xuanwu.ump.entity.HSRequestContext;
-import com.xuanwu.ump.exception.HSException;
 
 /**
  * @Description 请求预处理类
@@ -15,7 +14,7 @@ public interface RequestPreHandler {
      *
      * @return 是否继续运行
      */
-    public boolean handler(HSRequestContext context) throws HSException;
+    public boolean handler(HSRequestContext context) throws Exception;
 
     /**
      * 处理级别：小的优先执行

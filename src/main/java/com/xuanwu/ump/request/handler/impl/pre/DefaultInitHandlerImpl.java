@@ -3,7 +3,6 @@ package com.xuanwu.ump.request.handler.impl.pre;
 import com.xuanwu.ump.HSHttpHelperConstant;
 import com.xuanwu.ump.entity.HSRequestContext;
 import com.xuanwu.ump.entity.ParameterDefine;
-import com.xuanwu.ump.exception.HSException;
 import com.xuanwu.ump.request.handler.RequestPreHandler;
 
 import org.springframework.util.StringUtils;
@@ -23,7 +22,7 @@ public class DefaultInitHandlerImpl implements RequestPreHandler {
      * @return 是否继续运行
      */
     @Override
-    public boolean handler(HSRequestContext context) throws HSException {
+    public boolean handler(HSRequestContext context) throws Exception {
         List<ParameterDefine> list = context.getParameterDefineList();
         for (ParameterDefine parameter : list) {
             String defaultValue = parameter.getDefaultValue();

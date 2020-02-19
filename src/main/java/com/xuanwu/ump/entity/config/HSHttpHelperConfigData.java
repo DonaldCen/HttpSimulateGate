@@ -5,7 +5,10 @@ import org.apache.commons.lang.StringUtils;
 import java.util.Map;
 
 /**
- * Created by Administrator on 15-12-28.
+ * @Description
+ * @Author <a href="mailto:cenyingqiang@wxchina.com">yingqiang.Cen</a>
+ * @Date 2020/2/18
+ * @Version 1.0.0
  */
 public class HSHttpHelperConfigData {
     protected Map<String, Object> data = null;

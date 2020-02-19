@@ -2,7 +2,6 @@ package com.xuanwu.ump.request;
 
 import com.xuanwu.ump.entity.HSRequestContext;
 import com.xuanwu.ump.entity.ResponseResult;
-import com.xuanwu.ump.exception.HSException;
 import com.xuanwu.ump.request.handler.RequestPreHandler;
 import com.xuanwu.ump.request.handler.ResponseProHandler;
 
@@ -18,19 +17,19 @@ public interface HSHttpRequest {
      *
      * @param context 请求上下文。
      */
-    public void init(HSRequestContext context) throws HSException;
+    public void init(HSRequestContext context) throws Exception;
 
     /**
      * 执行请求。
      *
      * @return 响应结果。
      */
-    public ResponseResult execute() throws HSException;
+    public ResponseResult execute() throws Exception;
 
     /**
      * 异步请求
      */
-    public void asyncExecute() throws HSException;
+    public void asyncExecute() throws Exception;
 
     /**
      * 添加请求前处理器。
@@ -63,5 +62,5 @@ public interface HSHttpRequest {
     /**
      * 获取请求上下文。
      */
-    public HSRequestContext getContext() throws HSException;
+    public HSRequestContext getContext() throws Exception;
 }
