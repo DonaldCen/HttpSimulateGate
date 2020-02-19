@@ -34,7 +34,7 @@ import java.util.Map;
  * @Version 1.0.0
  */
 public class HSHttpHelperXmlConfig {
-    public static final String CONFIG_XML_PATH = "/httphelper-config.xml";
+    public static final String CONFIG_XML_PATH = "/HttpSimulateGate-config.xml";
     private static final HSHttpHelperXmlConfig _instance = new HSHttpHelperXmlConfig();
 
     protected static Log log = LogFactory.getLog(HSHttpHelperXmlConfig.class);
