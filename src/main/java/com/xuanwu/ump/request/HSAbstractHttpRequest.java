@@ -1,5 +1,6 @@
 package com.xuanwu.ump.request;
 
+import com.xuanwu.ump.HSHttpHelperXmlConfig;
 import com.xuanwu.ump.common.MapKeyComparator;
 import com.xuanwu.ump.entity.ErrorMessage;
 import com.xuanwu.ump.entity.HSRequestContext;

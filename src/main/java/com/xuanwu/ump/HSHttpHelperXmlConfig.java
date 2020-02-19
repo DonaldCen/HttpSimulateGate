@@ -1,4 +1,4 @@
-package com.xuanwu.ump.request;
+package com.xuanwu.ump;
 
 import com.xuanwu.ump.common.ConfigXmlFileFilter;
 import com.xuanwu.ump.common.XmlUtil;

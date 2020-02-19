@@ -1,10 +1,10 @@
 package com.xuanwu.ump.entity.config;
 
+import com.xuanwu.ump.HSHttpHelperXmlConfig;
 import com.xuanwu.ump.annotation.HSRequest;
 import com.xuanwu.ump.annotation.Parameter;
 import com.xuanwu.ump.entity.HSRequestContext;
 import com.xuanwu.ump.entity.ParameterDefine;
-import com.xuanwu.ump.request.HSHttpHelperXmlConfig;
 
 import org.apache.commons.lang.StringUtils;
 

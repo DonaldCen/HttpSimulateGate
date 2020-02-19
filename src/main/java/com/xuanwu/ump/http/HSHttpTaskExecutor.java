@@ -3,7 +3,7 @@ package com.xuanwu.ump.http;
 import com.xuanwu.ump.entity.HSRequestContext;
 import com.xuanwu.ump.entity.ResponseResult;
 import com.xuanwu.ump.entity.config.HttpClientConfig;
-import com.xuanwu.ump.request.HSHttpHelperXmlConfig;
+import com.xuanwu.ump.HSHttpHelperXmlConfig;
 import com.xuanwu.ump.request.handler.ResponseProHandler;
 
 import java.util.HashMap;
