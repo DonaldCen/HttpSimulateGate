@@ -9,14 +9,14 @@
             </parameters>
             <handlers>
                 <pro>
-                    <handler clazz="com.xuanwu.ump.request.handler.DownloadAllImageHandle"/>
+                    <handler clazz="com.xuanwu.ump.HttpSimulateGate.request.handler.DownloadAllImageHandle"/>
                 </pro>
             </handlers>
         </request>
         <request name="saveImageRequest" url="{url}" response-type="BYTE_ARRAY">
             <handlers>
                 <pro>
-                    <handler clazz="com.xuanwu.ump.request.handler.SaveImageHandle"/>
+                    <handler clazz="com.xuanwu.ump.HttpSimulateGate.request.handler.SaveImageHandle"/>
                 </pro>
             </handlers>
         </request>

@@ -7,13 +7,13 @@
     </httpclient-config>
     <default-handlers>
         <pre>
-            <handler type="init" clazz="com.xuanwu.ump.request.handler.impl.pre.DefaultInitHandlerImpl"/>
-            <handler type="parameter" clazz="com.xuanwu.ump.request.handler.impl.pre.DefaultParameterBuilderHandlerImpl"/>
-            <handler type="url" clazz="com.xuanwu.ump.request.handler.impl.pre.DefaultURLBuilderHandlerImpl"/>
-            <handler type="validation" clazz="com.xuanwu.ump.request.handler.impl.pre.DefaultValidationHandlerImpl"/>
+            <handler type="init" clazz="com.xuanwu.ump.HttpSimulateGate.request.handler.impl.pre.DefaultInitHandlerImpl"/>
+            <handler type="parameter" clazz="com.xuanwu.ump.HttpSimulateGate.request.handler.impl.pre.DefaultParameterBuilderHandlerImpl"/>
+            <handler type="url" clazz="com.xuanwu.ump.HttpSimulateGate.request.handler.impl.pre.DefaultURLBuilderHandlerImpl"/>
+            <handler type="validation" clazz="com.xuanwu.ump.HttpSimulateGate.request.handler.impl.pre.DefaultValidationHandlerImpl"/>
         </pre>
         <pro>
-            <handler type="parse" clazz="com.xuanwu.ump.request.handler.impl.pro.DefaultResultParseHandlerImpl"/>
+            <handler type="parse" clazz="com.xuanwu.ump.HttpSimulateGate.request.handler.impl.pro.DefaultResultParseHandlerImpl"/>
         </pro>
     </default-handlers>
     <requests>
