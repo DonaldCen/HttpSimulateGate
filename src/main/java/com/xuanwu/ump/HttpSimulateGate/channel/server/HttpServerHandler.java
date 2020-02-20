@@ -1,5 +1,7 @@
 package com.xuanwu.ump.HttpSimulateGate.channel.server;
 
+import com.xuanwu.ump.HttpSimulateGate.channel.HttpChannelHandler;
+
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelPipeline;
@@ -21,12 +23,12 @@ import java.util.concurrent.ScheduledExecutorService;
  * @Date 2020/2/19
  * @Version 1.0.0
  */
-public class ProtoServer implements Callable<String> {
+public class HttpServerHandler implements Callable<String> {
     private ExecutorService bossExecutor;
     private ExecutorService workerExecutor;
     private ScheduledExecutorService scheduledExecutor;
 
-    public ProtoServer(ExecutorService bossExecutor, ExecutorService workerExecutor,ScheduledExecutorService scheduledExecutor) {
+    public HttpServerHandler(ExecutorService bossExecutor, ExecutorService workerExecutor, ScheduledExecutorService scheduledExecutor) {
         this.bossExecutor = bossExecutor;
         this.workerExecutor = workerExecutor;
         this.scheduledExecutor = scheduledExecutor;
@@ -36,7 +38,7 @@ public class ProtoServer implements Callable<String> {
     public String call() throws Exception {
         ChannelFactory factory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor);
         ServerBootstrap bootstrap = new ServerBootstrap(factory);
-
+        final HttpChannelHandler channelHandler = new HttpChannelHandler();
         bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 
             @Override
