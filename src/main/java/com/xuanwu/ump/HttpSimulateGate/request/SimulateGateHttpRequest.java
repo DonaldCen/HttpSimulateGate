@@ -2,7 +2,6 @@ package com.xuanwu.ump.HttpSimulateGate.request;
 
 import com.xuanwu.ump.HttpSimulateGate.HSHttpHelperXmlConfig;
 import com.xuanwu.ump.HttpSimulateGate.common.MapKeyComparator;
-import com.xuanwu.ump.HttpSimulateGate.common.ParseWay;
 import com.xuanwu.ump.HttpSimulateGate.entity.HSRequestContext;
 import com.xuanwu.ump.HttpSimulateGate.entity.ParameterDefine;
 import com.xuanwu.ump.HttpSimulateGate.entity.ResponseResult;
@@ -105,11 +104,11 @@ public abstract class SimulateGateHttpRequest {
      * <default-handlers></default-handlers>中的<per></per> 和 <pro></pro>中的处理器
      */
     private void defaultHandlerInit() throws Exception {
-        List<RequestPreHandler> defaultPreHandlers = HSHttpHelperXmlConfig.getInstance(ParseWay.ParseRequest.XML).getDefaultPreHandlers();
+        List<RequestPreHandler> defaultPreHandlers = HSHttpHelperXmlConfig.getInstance().getDefaultPreHandlers();
         for (RequestPreHandler requestPreHandler : defaultPreHandlers) {
             addRequestPreHandler(requestPreHandler);
         }
-        List<ResponseProHandler> defaultProHandlers = HSHttpHelperXmlConfig.getInstance(ParseWay.ParseRequest.XML).getDefaultProHandlers();
+        List<ResponseProHandler> defaultProHandlers = HSHttpHelperXmlConfig.getInstance().getDefaultProHandlers();
         for (ResponseProHandler responseProHandler : defaultProHandlers) {
             addResponseProHandler(responseProHandler);
         }

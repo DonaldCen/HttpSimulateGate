@@ -2,7 +2,6 @@ package com.xuanwu.ump.HttpSimulateGate.http;
 
 import com.xuanwu.ump.HttpSimulateGate.HSHttpHelperXmlConfig;
 import com.xuanwu.ump.HttpSimulateGate.annotation.HSRequest;
-import com.xuanwu.ump.HttpSimulateGate.common.ParseWay;
 import com.xuanwu.ump.HttpSimulateGate.entity.HSRequestContext;
 import com.xuanwu.ump.HttpSimulateGate.entity.ResponseResult;
 import com.xuanwu.ump.HttpSimulateGate.entity.config.HttpClientConfig;
@@ -66,11 +65,11 @@ public abstract class HSHttpAbstractClient {
         List<NameValuePair> nvps = context.getNameValuePairList();
         String url = context.getUrl();
         if (context.getMethod() == HSRequest.MethodType.GET) {
-            dealWithGetRequest(url,nvps);
+            dealWithGetRequest(url, nvps);
         } else if (context.getMethod() == HSRequest.MethodType.POST) {
-            dealWithPostRequest(url,nvps);
+            dealWithPostRequest(url, nvps);
         } else {
-            throw new Exception("暂时不支持其他 methodType="+context.getMethod());
+            throw new Exception("暂时不支持其他 methodType=" + context.getMethod());
         }
         // 添加head
         addHeader();
@@ -78,7 +77,7 @@ public abstract class HSHttpAbstractClient {
         addCookie();
     }
 
-    private void dealWithGetRequest(String url,List<NameValuePair> nvps) throws Exception {
+    private void dealWithGetRequest(String url, List<NameValuePair> nvps) throws Exception {
         this.httpRequest = new HttpGet(url);
         String str = null;
         try {
@@ -97,7 +96,7 @@ public abstract class HSHttpAbstractClient {
         }
     }
 
-    private void dealWithPostRequest(String url,List<NameValuePair> nvps) throws Exception {
+    private void dealWithPostRequest(String url, List<NameValuePair> nvps) throws Exception {
         HttpPost post = new HttpPost(url);
         post.setHeader("ContentType", context.getContentType().getContentType());
 
@@ -138,7 +137,7 @@ public abstract class HSHttpAbstractClient {
         }
     }
 
-    private void addHeader(){
+    private void addHeader() {
         Map<String, String> headerMap = context.getHeaderMap();
         if (!headerMap.isEmpty()) {
             Set<String> keySet = headerMap.keySet();
@@ -148,7 +147,7 @@ public abstract class HSHttpAbstractClient {
         }
     }
 
-    private void addCookie(){
+    private void addCookie() {
         Map<String, String> cookieMap = context.getCookieMap();
         if (!cookieMap.isEmpty()) {
             Set<String> keySet = cookieMap.keySet();
@@ -168,7 +167,7 @@ public abstract class HSHttpAbstractClient {
         if (context.getUrl().startsWith("https")) {
             wrapClient();
         }
-        HttpClientConfig httpClientConfig = HSHttpHelperXmlConfig.getInstance(ParseWay.ParseRequest.XML).getHttpClientConfig();
+        HttpClientConfig httpClientConfig = HSHttpHelperXmlConfig.getInstance().getHttpClientConfig();
         this.httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, httpClientConfig.getConnectionTimeout());
         this.httpClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, httpClientConfig.getSocketTimeout());
         // 初始化

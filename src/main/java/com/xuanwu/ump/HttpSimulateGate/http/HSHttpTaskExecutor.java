@@ -1,11 +1,10 @@
 package com.xuanwu.ump.HttpSimulateGate.http;
 
-import com.xuanwu.ump.HttpSimulateGate.common.ParseWay;
+import com.xuanwu.ump.HttpSimulateGate.HSHttpHelperXmlConfig;
 import com.xuanwu.ump.HttpSimulateGate.entity.HSRequestContext;
 import com.xuanwu.ump.HttpSimulateGate.entity.ResponseResult;
-import com.xuanwu.ump.HttpSimulateGate.request.handler.ResponseProHandler;
 import com.xuanwu.ump.HttpSimulateGate.entity.config.HttpClientConfig;
-import com.xuanwu.ump.HttpSimulateGate.HSHttpHelperXmlConfig;
+import com.xuanwu.ump.HttpSimulateGate.request.handler.ResponseProHandler;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,11 +26,12 @@ public class HSHttpTaskExecutor {
     private ThreadPoolExecutor threadPool = null;
     private Map<String, FutureTask<Object>> taskMap = new HashMap<String, FutureTask<Object>>();
 
-    private HSHttpTaskExecutor() {}
+    private HSHttpTaskExecutor() {
+    }
 
-    public static HSHttpTaskExecutor getInstance()  throws Exception{
-        if(_instance.threadPool==null){
-            HttpClientConfig httpClientConfig = HSHttpHelperXmlConfig.getInstance(ParseWay.ParseRequest.XML).getHttpClientConfig();
+    public static HSHttpTaskExecutor getInstance() throws Exception {
+        if (_instance.threadPool == null) {
+            HttpClientConfig httpClientConfig = HSHttpHelperXmlConfig.getInstance().getHttpClientConfig();
             _instance.threadPool = new ThreadPoolExecutor(httpClientConfig.getCorePoolSize(),
                     httpClientConfig.getPoolMaxPoolSize(),
                     httpClientConfig.getKeepAliveSeconds(),
@@ -41,11 +41,12 @@ public class HSHttpTaskExecutor {
         }
         return _instance;
     }
+
     /**
      * 等待执行线程完成
      */
-    public void waitForFinish(Thread thread){
-        while (this.threadPool.getActiveCount()>0){
+    public void waitForFinish(Thread thread) {
+        while (this.threadPool.getActiveCount() > 0) {
             try {
                 thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -54,7 +55,7 @@ public class HSHttpTaskExecutor {
         }
     }
 
-    public ThreadPoolExecutor getThreadPool(){
+    public ThreadPoolExecutor getThreadPool() {
         return threadPool;
     }
 

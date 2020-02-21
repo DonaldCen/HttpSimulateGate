@@ -3,19 +3,19 @@ package com.xuanwu.ump.HttpSimulateGate;
 import com.xuanwu.ump.HttpSimulateGate.common.ConfigXmlFileFilter;
 import com.xuanwu.ump.HttpSimulateGate.common.ParseWay.ParseRequest;
 import com.xuanwu.ump.HttpSimulateGate.common.XmlUtil;
-import com.xuanwu.ump.HttpSimulateGate.request.handler.HandlerFactory;
-import com.xuanwu.ump.HttpSimulateGate.request.handler.RequestPreHandler;
-import com.xuanwu.ump.HttpSimulateGate.request.handler.ResponseProHandler;
-import com.xuanwu.ump.HttpSimulateGate.request.handler.impl.pre.DefaultInitHandlerImpl;
-import com.xuanwu.ump.HttpSimulateGate.request.handler.impl.pre.DefaultParameterBuilderHandlerImpl;
-import com.xuanwu.ump.HttpSimulateGate.request.handler.impl.pro.DefaultResultParseHandlerImpl;
 import com.xuanwu.ump.HttpSimulateGate.entity.config.HandlerData;
 import com.xuanwu.ump.HttpSimulateGate.entity.config.HttpClientConfig;
 import com.xuanwu.ump.HttpSimulateGate.entity.config.RequestConfigData;
 import com.xuanwu.ump.HttpSimulateGate.entity.config.RequestHandlers;
 import com.xuanwu.ump.HttpSimulateGate.entity.config.RequestXmlPath;
+import com.xuanwu.ump.HttpSimulateGate.request.handler.HandlerFactory;
+import com.xuanwu.ump.HttpSimulateGate.request.handler.RequestPreHandler;
+import com.xuanwu.ump.HttpSimulateGate.request.handler.ResponseProHandler;
+import com.xuanwu.ump.HttpSimulateGate.request.handler.impl.pre.DefaultInitHandlerImpl;
+import com.xuanwu.ump.HttpSimulateGate.request.handler.impl.pre.DefaultParameterBuilderHandlerImpl;
 import com.xuanwu.ump.HttpSimulateGate.request.handler.impl.pre.DefaultURLBuilderHandlerImpl;
 import com.xuanwu.ump.HttpSimulateGate.request.handler.impl.pre.DefaultValidationHandlerImpl;
+import com.xuanwu.ump.HttpSimulateGate.request.handler.impl.pro.DefaultResultParseHandlerImpl;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -38,7 +38,6 @@ public class HSHttpHelperXmlConfig {
     public static final String REQUEST_CONFIG_FILE = "/request-config.xml";
     public static final String RESPONSE_CONFIG_FILE = "/response-config.xml";
     private static final HSHttpHelperXmlConfig _instance = new HSHttpHelperXmlConfig();
-
     protected static Log log = LogFactory.getLog(HSHttpHelperXmlConfig.class);
 
     //request-config 存放数据 map
@@ -53,18 +52,24 @@ public class HSHttpHelperXmlConfig {
     //response-config 存放数据 map
     private Map<String, Object> responseConfigData;
 
-    public HSHttpHelperXmlConfig() {}
+    public HSHttpHelperXmlConfig() {
+    }
+
+
+    public static HSHttpHelperXmlConfig getInstance() throws Exception {
+        //默认 xml
+        return getInstance(ParseRequest.XML);
+    }
 
     public static HSHttpHelperXmlConfig getInstance(ParseRequest way) throws Exception {
         try {
-            switch (way){
+            switch (way) {
                 case XML:
                     parseForXml();
                     break;
                 default:
                     break;
             }
-
         } catch (Exception e) {
             throw new Exception(e.getMessage(), e);
         }
@@ -93,7 +98,7 @@ public class HSHttpHelperXmlConfig {
     }
 
     private static void parseResponseConfig() throws Exception {
-        if(_instance.responseConfigData == null){
+        if (_instance.responseConfigData == null) {
             //1.解析request-config 文件,把数据存放到configData中
             _instance.responseConfigData = parseConfigFileAndPutDataToMap(RESPONSE_CONFIG_FILE);
         }
@@ -105,7 +110,6 @@ public class HSHttpHelperXmlConfig {
     }
 
 
-
     public Map<String, Object> getConfigData() {
         return requestConfigData;
     }
@@ -115,7 +119,12 @@ public class HSHttpHelperXmlConfig {
     }
 
     public String getCharset() {
-        return getHttpClientConfig().getHttpCharset();
+        if (getHttpClientConfig() == null) {
+            return "utf-8";
+        }
+        return StringUtils.isBlank(getHttpClientConfig().getHttpCharset()) ?
+                "utf-8" :
+                getHttpClientConfig().getHttpCharset();
     }
 
     public List<ResponseProHandler> getDefaultProHandlers() throws Exception {
@@ -169,14 +178,14 @@ public class HSHttpHelperXmlConfig {
             // 前处理把相同类型整理为列表，支持配置多个相同类型的处理器
             Map<String, List<String>> preHandlerMap = new HashMap<String, List<String>>();
 
-            setUserPreHandlerList(preHandlerList,preHandlerMap);
+            setUserPreHandlerList(preHandlerList, preHandlerMap);
 
             setDefaultPreHandlerList(preHandlerMap);
         }
         return defaultPreHandlers;
     }
 
-    private void setUserPreHandlerList(List<HandlerData> preHandlerList,Map<String, List<String>> preHandlerMap){
+    private void setUserPreHandlerList(List<HandlerData> preHandlerList, Map<String, List<String>> preHandlerMap) {
         if (preHandlerList != null) {
             for (HandlerData handlerData : preHandlerList) {
                 String clazz = handlerData.getClazz();
@@ -246,7 +255,7 @@ public class HSHttpHelperXmlConfig {
     /**
      * 解析 requests 项
      */
-    private void parseRequestsConfig(){
+    private void parseRequestsConfig() {
         if (this.requestConfigData.containsKey("requests")) {
             Object obj = ((Map) this.requestConfigData.get("requests")).get("request");
             if (obj instanceof List) {
@@ -262,6 +271,7 @@ public class HSHttpHelperXmlConfig {
 
         }
     }
+
     /**
      * 解析 request-xml 项
      */

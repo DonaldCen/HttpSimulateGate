@@ -8,11 +8,13 @@ package com.xuanwu.ump.HttpSimulateGate.common;
  */
 public class ParseWay {
     //解析request参数方式
-    public enum ParseRequest{
-        XML
+    public enum ParseRequest {
+        XML,
+        JSON
     }
+
     //解析response参数方式
-    enum ParseResponse{
+    enum ParseResponse {
         XML
     }
 }

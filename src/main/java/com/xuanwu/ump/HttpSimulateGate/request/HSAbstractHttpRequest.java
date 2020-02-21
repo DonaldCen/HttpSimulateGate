@@ -1,15 +1,14 @@
 package com.xuanwu.ump.HttpSimulateGate.request;
 
 import com.xuanwu.ump.HttpSimulateGate.HSHttpHelperXmlConfig;
-import com.xuanwu.ump.HttpSimulateGate.common.ParseWay;
-import com.xuanwu.ump.HttpSimulateGate.request.handler.RequestPreHandler;
-import com.xuanwu.ump.HttpSimulateGate.request.handler.ResponseProHandler;
 import com.xuanwu.ump.HttpSimulateGate.common.MapKeyComparator;
 import com.xuanwu.ump.HttpSimulateGate.entity.ErrorMessage;
 import com.xuanwu.ump.HttpSimulateGate.entity.HSRequestContext;
 import com.xuanwu.ump.HttpSimulateGate.entity.ParameterDefine;
 import com.xuanwu.ump.HttpSimulateGate.entity.ResponseResult;
 import com.xuanwu.ump.HttpSimulateGate.http.HSHttpTaskExecutor;
+import com.xuanwu.ump.HttpSimulateGate.request.handler.RequestPreHandler;
+import com.xuanwu.ump.HttpSimulateGate.request.handler.ResponseProHandler;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -239,11 +238,11 @@ public abstract class HSAbstractHttpRequest implements HSHttpRequest {
      * 初始化默认处理器
      */
     private void defaultHandlerInit() throws Exception {
-        List<RequestPreHandler> defaultPreHandlers = HSHttpHelperXmlConfig.getInstance(ParseWay.ParseRequest.XML).getDefaultPreHandlers();
+        List<RequestPreHandler> defaultPreHandlers = HSHttpHelperXmlConfig.getInstance().getDefaultPreHandlers();
         for (RequestPreHandler requestPreHandler : defaultPreHandlers) {
             addRequestPreHandler(requestPreHandler);
         }
-        List<ResponseProHandler> defaultProHandlers = HSHttpHelperXmlConfig.getInstance(ParseWay.ParseRequest.XML).getDefaultProHandlers();
+        List<ResponseProHandler> defaultProHandlers = HSHttpHelperXmlConfig.getInstance().getDefaultProHandlers();
         for (ResponseProHandler responseProHandler : defaultProHandlers) {
             addResponseProHandler(responseProHandler);
         }

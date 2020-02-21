@@ -3,7 +3,6 @@ package com.xuanwu.ump.HttpSimulateGate.entity.config;
 import com.xuanwu.ump.HttpSimulateGate.HSHttpHelperXmlConfig;
 import com.xuanwu.ump.HttpSimulateGate.annotation.HSRequest;
 import com.xuanwu.ump.HttpSimulateGate.annotation.Parameter;
-import com.xuanwu.ump.HttpSimulateGate.common.ParseWay;
 import com.xuanwu.ump.HttpSimulateGate.entity.HSRequestContext;
 import com.xuanwu.ump.HttpSimulateGate.entity.ParameterDefine;
 
@@ -33,7 +32,7 @@ public class RequestConfigData extends HSHttpHelperConfigData {
             context.setUrl(getValue("url"));
         }
         if (StringUtils.isEmpty(getValue("charset"))) {
-            context.setCharset(HSHttpHelperXmlConfig.getInstance(ParseWay.ParseRequest.XML).getHttpClientConfig().getHttpCharset());
+            context.setCharset(HSHttpHelperXmlConfig.getInstance().getHttpClientConfig().getHttpCharset());
         } else {
             context.setCharset(getValue("charset"));
         }
@@ -60,31 +59,29 @@ public class RequestConfigData extends HSHttpHelperConfigData {
         } else {
             context.setMethod(HSRequest.MethodType.GET);
         }
-        if(this.data.containsKey("parameters")){
-            Object parameters=  getObject("parameters:parameter");
+        if (this.data.containsKey("parameters")) {
+            Object parameters = getObject("parameters:parameter");
             if (parameters != null) {
-                if(parameters instanceof List){
-                    for (Map<String, Object> parameter : (List<Map>)parameters) {
+                if (parameters instanceof List) {
+                    for (Map<String, Object> parameter : (List<Map>) parameters) {
                         ParameterDefine parameterDefine = createParameterDefine(parameter);
                         context.addParameterDefine(parameterDefine);
                     }
-                }
-                else if(parameters instanceof Map){
-                    ParameterDefine parameterDefine = createParameterDefine((Map)parameters);
+                } else if (parameters instanceof Map) {
+                    ParameterDefine parameterDefine = createParameterDefine((Map) parameters);
                     context.addParameterDefine(parameterDefine);
                 }
             }
         }
-        if(data.containsKey("headers")){
-            Object headers =  getObject("headers:header");
+        if (data.containsKey("headers")) {
+            Object headers = getObject("headers:header");
             if (headers != null) {
-                if(headers instanceof List){
-                    for (Map<String, Object> header : (List<Map>)headers) {
+                if (headers instanceof List) {
+                    for (Map<String, Object> header : (List<Map>) headers) {
                         context.addHeader(getValue(header, "name"), getValue(header, "value"));
                     }
-                }
-                else if(headers instanceof Map){
-                    context.addHeader(getValue((Map)headers, "name"), getValue((Map)headers, "value"));
+                } else if (headers instanceof Map) {
+                    context.addHeader(getValue((Map) headers, "name"), getValue((Map) headers, "value"));
                 }
 
             }
@@ -92,7 +89,7 @@ public class RequestConfigData extends HSHttpHelperConfigData {
         return context;
     }
 
-    public RequestHandlers getRequestHandlers(){
+    public RequestHandlers getRequestHandlers() {
         Map<String, Object> handlers = (Map<String, Object>) getObject("handlers");
         if (handlers != null) {
             RequestHandlers requestHandlers = new RequestHandlers(handlers);
@@ -102,7 +99,7 @@ public class RequestConfigData extends HSHttpHelperConfigData {
     }
 
 
-    private ParameterDefine createParameterDefine(Map parameter){
+    private ParameterDefine createParameterDefine(Map parameter) {
         ParameterDefine parameterDefine = new ParameterDefine();
         parameterDefine.setName(getValue(parameter, "name"));
         parameterDefine.setDescription(getValue(parameter, "description"));

@@ -2,6 +2,7 @@ package com.xuanwu.ump.HttpSimulateGate.entity.config;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -11,13 +12,13 @@ import java.util.Map;
  * @Version 1.0.0
  */
 public class HSHttpHelperConfigData {
-    protected Map<String, Object> data = null;
+    protected Map<String, Object> data = new HashMap<String, Object>();
 
     public HSHttpHelperConfigData(Map<String, Object> data) {
         this.data = data;
     }
 
-    public Object getObject(Map<String, Object> dataMap,String key) {
+    public Object getObject(Map<String, Object> dataMap, String key) {
         if (!StringUtils.isEmpty(key)) {
             if (key.indexOf(":") != -1) {
                 String[] l = key.split(":");
@@ -36,15 +37,13 @@ public class HSHttpHelperConfigData {
         }
         return dataMap.get(key);
     }
+
     public Object getObject(String key) {
-        return getObject(data,key);
+        return getObject(data, key);
     }
 
     /**
      * 获取值，支持:为内容引用符
-     *
-     * @param key
-     * @return
      */
     public String getValue(String key) {
         return getValue(data, key);

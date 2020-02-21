@@ -4,7 +4,6 @@ import com.xuanwu.ump.HttpSimulateGate.HSHttpHelperXmlConfig;
 import com.xuanwu.ump.HttpSimulateGate.annotation.HSRequest;
 import com.xuanwu.ump.HttpSimulateGate.annotation.Header;
 import com.xuanwu.ump.HttpSimulateGate.annotation.Parameter;
-import com.xuanwu.ump.HttpSimulateGate.common.ParseWay;
 import com.xuanwu.ump.HttpSimulateGate.entity.HSRequestContext;
 import com.xuanwu.ump.HttpSimulateGate.entity.ParameterDefine;
 
@@ -19,7 +18,7 @@ import org.apache.commons.lang.StringUtils;
 public abstract class HSAnnotationHttpRequest extends HSAbstractHttpRequest {
 
     @Override
-    protected HSRequestContext builderContext()  throws Exception{
+    protected HSRequestContext builderContext() throws Exception {
         HSRequestContext context = null;
         HSRequest ann = this.getClass().getAnnotation(HSRequest.class);
         if (ann != null) {
@@ -37,13 +36,13 @@ public abstract class HSAnnotationHttpRequest extends HSAbstractHttpRequest {
             if (context.getMethod() == null) {
                 context.setMethod(ann.method());
             }
-            if(context.getContentType() == null){
+            if (context.getContentType() == null) {
                 context.setContentType(ann.contentType());
             }
 
             String charset = ann.charset();
             if (StringUtils.isEmpty(charset)) {
-                charset = HSHttpHelperXmlConfig.getInstance(ParseWay.ParseRequest.XML).getCharset();
+                charset = HSHttpHelperXmlConfig.getInstance().getCharset();
             }
             if (StringUtils.isEmpty(context.getCharset())) {
                 context.setCharset(charset);
@@ -68,9 +67,6 @@ public abstract class HSAnnotationHttpRequest extends HSAbstractHttpRequest {
 
     /**
      * 获取参数
-     *
-     * @param parameter
-     * @return
      */
     private ParameterDefine builderParameterDefine(Parameter parameter) {
         ParameterDefine parameterDefine = new ParameterDefine();

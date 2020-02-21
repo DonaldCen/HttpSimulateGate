@@ -1,5 +1,6 @@
 package com.xuanwu.ump.HttpSimulateGate.common;
 
+import com.alibaba.fastjson.JSON;
 import com.xuanwu.ump.HttpSimulateGate.HSHttpHelperXmlConfig;
 
 import junit.framework.TestCase;
@@ -43,5 +44,10 @@ public class TestConfigXmlFileFilter extends TestCase {
                 listFlies(f, matchs, i + 1, pathList);
             }
         }
+    }
+
+    public void testHSHttpHelperXmlConfig() throws Exception {
+        HSHttpHelperXmlConfig config = HSHttpHelperXmlConfig.getInstance();
+        System.out.println(JSON.toJSONString(config));
     }
 }
