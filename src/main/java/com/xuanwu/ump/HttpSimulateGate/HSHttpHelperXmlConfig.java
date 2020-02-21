@@ -1,6 +1,7 @@
 package com.xuanwu.ump.HttpSimulateGate;
 
 import com.xuanwu.ump.HttpSimulateGate.common.ConfigXmlFileFilter;
+import com.xuanwu.ump.HttpSimulateGate.common.ParseWay.ParseRequest;
 import com.xuanwu.ump.HttpSimulateGate.common.XmlUtil;
 import com.xuanwu.ump.HttpSimulateGate.request.handler.HandlerFactory;
 import com.xuanwu.ump.HttpSimulateGate.request.handler.RequestPreHandler;
@@ -34,12 +35,14 @@ import java.util.Map;
  * @Version 1.0.0
  */
 public class HSHttpHelperXmlConfig {
-    public static final String CONFIG_XML_PATH = "/HttpSimulateGate-config.xml";
+    public static final String REQUEST_CONFIG_FILE = "/request-config.xml";
+    public static final String RESPONSE_CONFIG_FILE = "/response-config.xml";
     private static final HSHttpHelperXmlConfig _instance = new HSHttpHelperXmlConfig();
 
     protected static Log log = LogFactory.getLog(HSHttpHelperXmlConfig.class);
 
-    private Map<String, Object> configData;
+    //request-config 存放数据 map
+    private Map<String, Object> requestConfigData;
     private Map<String, RequestConfigData> requestConfigDataMap;
     private List<RequestConfigData> requestConfigDataList;
     private HttpClientConfig httpClientConfig;
@@ -47,27 +50,64 @@ public class HSHttpHelperXmlConfig {
     private List<RequestPreHandler> defaultPreHandlers;
     private List<ResponseProHandler> defaultProHandlers;
 
+    //response-config 存放数据 map
+    private Map<String, Object> responseConfigData;
+
     public HSHttpHelperXmlConfig() {}
 
-    public static HSHttpHelperXmlConfig getInstance() throws Exception {
+    public static HSHttpHelperXmlConfig getInstance(ParseRequest way) throws Exception {
         try {
-            if (_instance.configData == null) {
-                File xmlFile = new File(XmlUtil.class.getResource(CONFIG_XML_PATH).toURI());
-                log.debug(xmlFile.getPath());
-                System.out.println(xmlFile.getPath());
-                _instance.configData = XmlUtil.xmlToMap(xmlFile);
-                _instance.httpClientConfig = new HttpClientConfig((Map) _instance.configData.get("httpclient-config"));
-                _instance.defaultHandlers = new RequestHandlers((Map) _instance.configData.get("default-handlers"));
-                _instance.requestConfigDataMap = new HashMap<String, RequestConfigData>();
-                _instance.requestListInit();
+            switch (way){
+                case XML:
+                    parseForXml();
+                    break;
+                default:
+                    break;
             }
+
         } catch (Exception e) {
             throw new Exception(e.getMessage(), e);
         }
         return _instance;
     }
+
+    private static void parseForXml() throws Exception {
+        //解析 request-config 配置
+        parseRequestConfig();
+        //解析 response-config 配置
+        parseResponseConfig();
+    }
+
+    private static void parseRequestConfig() throws Exception {
+        if (_instance.requestConfigData == null) {
+            //1.解析request-config 文件,把数据存放到configData中
+            _instance.requestConfigData = parseConfigFileAndPutDataToMap(REQUEST_CONFIG_FILE);
+            //2.解析 httpClientConfig
+            _instance.httpClientConfig = new HttpClientConfig((Map) _instance.requestConfigData.get("httpclient-config"));
+            //3.解析 defaultHandlers
+            _instance.defaultHandlers = new RequestHandlers((Map) _instance.requestConfigData.get("default-handlers"));
+            //4.解析 requests
+            _instance.requestConfigDataMap = new HashMap<String, RequestConfigData>();
+            _instance.requestListInit();
+        }
+    }
+
+    private static void parseResponseConfig() throws Exception {
+        if(_instance.responseConfigData == null){
+            //1.解析request-config 文件,把数据存放到configData中
+            _instance.responseConfigData = parseConfigFileAndPutDataToMap(RESPONSE_CONFIG_FILE);
+        }
+    }
+
+    private static Map<String, Object> parseConfigFileAndPutDataToMap(String url) throws Exception {
+        File xmlFile = new File(XmlUtil.class.getResource(url).toURI());
+        return XmlUtil.xmlToMap(xmlFile);
+    }
+
+
+
     public Map<String, Object> getConfigData() {
-        return configData;
+        return requestConfigData;
     }
 
     public HttpClientConfig getHttpClientConfig() {
@@ -128,118 +168,145 @@ public class HSHttpHelperXmlConfig {
             List<HandlerData> preHandlerList = defaultHandlers.getPreHandlers();
             // 前处理把相同类型整理为列表，支持配置多个相同类型的处理器
             Map<String, List<String>> preHandlerMap = new HashMap<String, List<String>>();
-            if (preHandlerList != null) {
-                for (HandlerData handlerData : preHandlerList) {
-                    String clazz = handlerData.getClazz();
-                    String type = handlerData.getType();
-                    if (preHandlerMap.containsKey(type)) {
-                        List<String> list = preHandlerMap.get(type);
-                        list.add(clazz);
-                    } else {
-                        List<String> list = new ArrayList<String>();
-                        list.add(clazz);
-                        preHandlerMap.put(type, list);
-                    }
-                }
-            }
-            // 若用户没有配置必须的处理器，使用默认的
-            String[] preHandlerTypeList = {"init", "parameter", "url", "validation", "user"};
-            for (int i = 0; i < preHandlerTypeList.length; i++) {
-                String type = preHandlerTypeList[i];
-                // 存在配置：使用配置
-                if (preHandlerMap.containsKey(type)) {
-                    List<String> list = preHandlerMap.get(type);
-                    for (String clazz : list) {
-                        defaultPreHandlers.add(HandlerFactory.finadHandler(RequestPreHandler.class, clazz));
-                    }
-                } else {
-                    // 没有配置：使用默认
-                    switch (i) {
-                        case 0: {
-                            defaultPreHandlers.add(HandlerFactory.finadHandler(RequestPreHandler.class, DefaultInitHandlerImpl.class.getName()));
-                            break;
-                        }
-                        case 1: {
-                            defaultPreHandlers.add(HandlerFactory.finadHandler(RequestPreHandler.class, DefaultParameterBuilderHandlerImpl.class.getName()));
-                            break;
-                        }
-                        case 2: {
-                            defaultPreHandlers.add(HandlerFactory.finadHandler(RequestPreHandler.class, DefaultURLBuilderHandlerImpl.class.getName()));
-                            break;
-                        }
-                        case 3: {
-                            defaultPreHandlers.add(HandlerFactory.finadHandler(RequestPreHandler.class, DefaultValidationHandlerImpl.class.getName()));
-                            break;
-                        }
-                    }
-                }
-            }
+
+            setUserPreHandlerList(preHandlerList,preHandlerMap);
+
+            setDefaultPreHandlerList(preHandlerMap);
         }
         return defaultPreHandlers;
     }
 
-    private void requestListInit() throws URISyntaxException, Exception {
+    private void setUserPreHandlerList(List<HandlerData> preHandlerList,Map<String, List<String>> preHandlerMap){
+        if (preHandlerList != null) {
+            for (HandlerData handlerData : preHandlerList) {
+                String clazz = handlerData.getClazz();
+                String type = handlerData.getType();
+                if (preHandlerMap.containsKey(type)) {
+                    List<String> list = preHandlerMap.get(type);
+                    list.add(clazz);
+                } else {
+                    List<String> list = new ArrayList<String>();
+                    list.add(clazz);
+                    preHandlerMap.put(type, list);
+                }
+            }
+        }
+    }
+
+    private void setDefaultPreHandlerList(Map<String, List<String>> preHandlerMap) throws Exception {
+        // 若用户没有配置必须的处理器，使用默认的
+        String[] preHandlerTypeList = {"init", "parameter", "url", "validation", "user"};
+        for (int i = 0; i < preHandlerTypeList.length; i++) {
+            String type = preHandlerTypeList[i];
+            // 存在配置：使用配置
+            if (preHandlerMap.containsKey(type)) {
+                List<String> list = preHandlerMap.get(type);
+                for (String clazz : list) {
+                    defaultPreHandlers.add(HandlerFactory.finadHandler(RequestPreHandler.class, clazz));
+                }
+            } else {
+                // 没有配置：使用默认
+                switch (i) {
+                    case 0: {
+                        defaultPreHandlers.add(HandlerFactory.finadHandler(RequestPreHandler.class, DefaultInitHandlerImpl.class.getName()));
+                        break;
+                    }
+                    case 1: {
+                        defaultPreHandlers.add(HandlerFactory.finadHandler(RequestPreHandler.class, DefaultParameterBuilderHandlerImpl.class.getName()));
+                        break;
+                    }
+                    case 2: {
+                        defaultPreHandlers.add(HandlerFactory.finadHandler(RequestPreHandler.class, DefaultURLBuilderHandlerImpl.class.getName()));
+                        break;
+                    }
+                    case 3: {
+                        defaultPreHandlers.add(HandlerFactory.finadHandler(RequestPreHandler.class, DefaultValidationHandlerImpl.class.getName()));
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void requestListInit() throws Exception {
         if (requestConfigDataList == null) {
             requestConfigDataList = new ArrayList<RequestConfigData>();
-            if (this.configData.containsKey("requests")) {
-                Object obj = ((Map) this.configData.get("requests")).get("request");
-                if (obj instanceof List) {
-                    List<Map<String, Object>> list = (List<Map<String, Object>>) obj;
-                    if (list != null) {
-                        for (Map<String, Object> map : list) {
-                            requestConfigDataList.add(new RequestConfigData(map));
-                        }
-                    }
-                } else if (obj instanceof Map) {
-                    requestConfigDataList.add(new RequestConfigData((Map) obj));
-                }
 
-            }
-            if (this.configData.containsKey("request-xml")) {
-                List<Map> mapList = new ArrayList<Map>();
-                Object obj = ((Map) this.configData.get("request-xml")).get("path");
-                if (obj instanceof List) {
-                    mapList.addAll((List) obj);
-                } else if (obj instanceof Map) {
-                    mapList.add((Map) obj);
-                }
-                List<String> xmlPathList = new ArrayList<String>();
-                if (!mapList.isEmpty()) {
-                    for (Map map : mapList) {
-                        RequestXmlPath pathData = new RequestXmlPath(map);
-                        String path = pathData.getPath();
-                        if (!StringUtils.isEmpty(path)) {
-                            xmlPathList.addAll(parsePath(path));
-                        }
-                    }
-                }
-                // 解析xml
-                for (String xmlPath : xmlPathList) {
-                    File xmlFile = new File(xmlPath);
-                    if (xmlFile.exists()) {
-                        Object xmlConfigObj = XmlUtil.xmlToMap(xmlFile);
-                        if (xmlConfigObj instanceof Map) {
-                            Map<String, Object> xmlConfigMap = (Map) xmlConfigObj;
-                            if (xmlConfigMap.containsKey("requests")) {
-                                Object obj2 = ((Map) xmlConfigMap.get("requests")).get("request");
-                                if (obj2 instanceof List) {
-                                    List<Map<String, Object>> list = (List<Map<String, Object>>) obj2;
-                                    if (list != null) {
-                                        for (Map<String, Object> requestMap : list) {
-                                            requestConfigDataList.add(new RequestConfigData(requestMap));
-                                        }
-                                    }
-                                } else if (obj2 instanceof Map) {
-                                    requestConfigDataList.add(new RequestConfigData((Map) obj2));
-                                }
+            //解析 requests项
+            parseRequestsConfig();
 
-                            }
-                        }
-                    }
-                }
-            }
+            parseRequestXmlConfig();
+
             for (RequestConfigData requestConfigData : requestConfigDataList) {
                 requestConfigDataMap.put(requestConfigData.getValue("name"), requestConfigData);
+            }
+        }
+    }
+
+    /**
+     * 解析 requests 项
+     */
+    private void parseRequestsConfig(){
+        if (this.requestConfigData.containsKey("requests")) {
+            Object obj = ((Map) this.requestConfigData.get("requests")).get("request");
+            if (obj instanceof List) {
+                List<Map<String, Object>> list = (List<Map<String, Object>>) obj;
+                if (list != null) {
+                    for (Map<String, Object> map : list) {
+                        requestConfigDataList.add(new RequestConfigData(map));
+                    }
+                }
+            } else if (obj instanceof Map) {
+                requestConfigDataList.add(new RequestConfigData((Map) obj));
+            }
+
+        }
+    }
+    /**
+     * 解析 request-xml 项
+     */
+    private void parseRequestXmlConfig() throws Exception {
+        if (this.requestConfigData.containsKey("request-xml")) {
+            List<Map> mapList = new ArrayList<Map>();
+            Object obj = ((Map) this.requestConfigData.get("request-xml")).get("path");
+            if (obj instanceof List) {
+                mapList.addAll((List) obj);
+            } else if (obj instanceof Map) {
+                mapList.add((Map) obj);
+            }
+            List<String> xmlPathList = new ArrayList<String>();
+            if (!mapList.isEmpty()) {
+                for (Map map : mapList) {
+                    RequestXmlPath pathData = new RequestXmlPath(map);
+                    String path = pathData.getPath();
+                    if (!StringUtils.isEmpty(path)) {
+                        xmlPathList.addAll(parsePath(path));
+                    }
+                }
+            }
+            // 解析xml
+            for (String xmlPath : xmlPathList) {
+                File xmlFile = new File(xmlPath);
+                if (xmlFile.exists()) {
+                    Object xmlConfigObj = XmlUtil.xmlToMap(xmlFile);
+                    if (xmlConfigObj instanceof Map) {
+                        Map<String, Object> xmlConfigMap = (Map) xmlConfigObj;
+                        if (xmlConfigMap.containsKey("requests")) {
+                            Object obj2 = ((Map) xmlConfigMap.get("requests")).get("request");
+                            if (obj2 instanceof List) {
+                                List<Map<String, Object>> list = (List<Map<String, Object>>) obj2;
+                                if (list != null) {
+                                    for (Map<String, Object> requestMap : list) {
+                                        requestConfigDataList.add(new RequestConfigData(requestMap));
+                                    }
+                                }
+                            } else if (obj2 instanceof Map) {
+                                requestConfigDataList.add(new RequestConfigData((Map) obj2));
+                            }
+
+                        }
+                    }
+                }
             }
         }
     }

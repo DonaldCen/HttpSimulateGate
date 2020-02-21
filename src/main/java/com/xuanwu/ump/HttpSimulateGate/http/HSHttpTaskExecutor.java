@@ -1,5 +1,6 @@
 package com.xuanwu.ump.HttpSimulateGate.http;
 
+import com.xuanwu.ump.HttpSimulateGate.common.ParseWay;
 import com.xuanwu.ump.HttpSimulateGate.entity.HSRequestContext;
 import com.xuanwu.ump.HttpSimulateGate.entity.ResponseResult;
 import com.xuanwu.ump.HttpSimulateGate.request.handler.ResponseProHandler;
@@ -30,7 +31,7 @@ public class HSHttpTaskExecutor {
 
     public static HSHttpTaskExecutor getInstance()  throws Exception{
         if(_instance.threadPool==null){
-            HttpClientConfig httpClientConfig = HSHttpHelperXmlConfig.getInstance().getHttpClientConfig();
+            HttpClientConfig httpClientConfig = HSHttpHelperXmlConfig.getInstance(ParseWay.ParseRequest.XML).getHttpClientConfig();
             _instance.threadPool = new ThreadPoolExecutor(httpClientConfig.getCorePoolSize(),
                     httpClientConfig.getPoolMaxPoolSize(),
                     httpClientConfig.getKeepAliveSeconds(),

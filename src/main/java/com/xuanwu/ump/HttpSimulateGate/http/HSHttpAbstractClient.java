@@ -2,6 +2,7 @@ package com.xuanwu.ump.HttpSimulateGate.http;
 
 import com.xuanwu.ump.HttpSimulateGate.HSHttpHelperXmlConfig;
 import com.xuanwu.ump.HttpSimulateGate.annotation.HSRequest;
+import com.xuanwu.ump.HttpSimulateGate.common.ParseWay;
 import com.xuanwu.ump.HttpSimulateGate.entity.HSRequestContext;
 import com.xuanwu.ump.HttpSimulateGate.entity.ResponseResult;
 import com.xuanwu.ump.HttpSimulateGate.entity.config.HttpClientConfig;
@@ -167,7 +168,7 @@ public abstract class HSHttpAbstractClient {
         if (context.getUrl().startsWith("https")) {
             wrapClient();
         }
-        HttpClientConfig httpClientConfig = HSHttpHelperXmlConfig.getInstance().getHttpClientConfig();
+        HttpClientConfig httpClientConfig = HSHttpHelperXmlConfig.getInstance(ParseWay.ParseRequest.XML).getHttpClientConfig();
         this.httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, httpClientConfig.getConnectionTimeout());
         this.httpClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, httpClientConfig.getSocketTimeout());
         // 初始化

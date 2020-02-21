@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE httphelper-config SYSTEM "HttpSimulateGate-config.dtd">
+<!DOCTYPE httphelper-config SYSTEM "request-config.dtd">
 <httphelper-config>
     <httpclient-config>
         <http charset="UTF-8" connection-timeout="15000" socket-timeout="15000"/>

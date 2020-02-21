@@ -1,6 +1,7 @@
 package com.xuanwu.ump.HttpSimulateGate.request;
 
 import com.xuanwu.ump.HttpSimulateGate.HSHttpHelperXmlConfig;
+import com.xuanwu.ump.HttpSimulateGate.common.ParseWay;
 import com.xuanwu.ump.HttpSimulateGate.request.handler.RequestPreHandler;
 import com.xuanwu.ump.HttpSimulateGate.request.handler.ResponseProHandler;
 import com.xuanwu.ump.HttpSimulateGate.common.MapKeyComparator;
@@ -238,11 +239,11 @@ public abstract class HSAbstractHttpRequest implements HSHttpRequest {
      * 初始化默认处理器
      */
     private void defaultHandlerInit() throws Exception {
-        List<RequestPreHandler> defaultPreHandlers = HSHttpHelperXmlConfig.getInstance().getDefaultPreHandlers();
+        List<RequestPreHandler> defaultPreHandlers = HSHttpHelperXmlConfig.getInstance(ParseWay.ParseRequest.XML).getDefaultPreHandlers();
         for (RequestPreHandler requestPreHandler : defaultPreHandlers) {
             addRequestPreHandler(requestPreHandler);
         }
-        List<ResponseProHandler> defaultProHandlers = HSHttpHelperXmlConfig.getInstance().getDefaultProHandlers();
+        List<ResponseProHandler> defaultProHandlers = HSHttpHelperXmlConfig.getInstance(ParseWay.ParseRequest.XML).getDefaultProHandlers();
         for (ResponseProHandler responseProHandler : defaultProHandlers) {
             addResponseProHandler(responseProHandler);
         }

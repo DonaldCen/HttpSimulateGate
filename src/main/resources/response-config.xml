@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE response-config SYSTEM "response-config.dtd">
+<response-config>
+    <responses>
+        <response name="" content-type="">
+            <response-clazz type="" clazz=""/>
+        </response>
+    </responses>
+</response-config>

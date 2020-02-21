@@ -4,6 +4,7 @@ import com.xuanwu.ump.HttpSimulateGate.HSHttpHelperXmlConfig;
 import com.xuanwu.ump.HttpSimulateGate.annotation.HSRequest;
 import com.xuanwu.ump.HttpSimulateGate.annotation.Header;
 import com.xuanwu.ump.HttpSimulateGate.annotation.Parameter;
+import com.xuanwu.ump.HttpSimulateGate.common.ParseWay;
 import com.xuanwu.ump.HttpSimulateGate.entity.HSRequestContext;
 import com.xuanwu.ump.HttpSimulateGate.entity.ParameterDefine;
 
@@ -42,7 +43,7 @@ public abstract class HSAnnotationHttpRequest extends HSAbstractHttpRequest {
 
             String charset = ann.charset();
             if (StringUtils.isEmpty(charset)) {
-                charset = HSHttpHelperXmlConfig.getInstance().getCharset();
+                charset = HSHttpHelperXmlConfig.getInstance(ParseWay.ParseRequest.XML).getCharset();
             }
             if (StringUtils.isEmpty(context.getCharset())) {
                 context.setCharset(charset);

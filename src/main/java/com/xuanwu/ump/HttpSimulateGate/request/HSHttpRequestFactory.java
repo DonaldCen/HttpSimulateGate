@@ -1,6 +1,7 @@
 package com.xuanwu.ump.HttpSimulateGate.request;
 
 import com.xuanwu.ump.HttpSimulateGate.HSHttpHelperXmlConfig;
+import com.xuanwu.ump.HttpSimulateGate.common.ParseWay;
 import com.xuanwu.ump.HttpSimulateGate.entity.config.RequestConfigData;
 
 /**
@@ -11,7 +12,7 @@ import com.xuanwu.ump.HttpSimulateGate.entity.config.RequestConfigData;
  */
 public class HSHttpRequestFactory {
     public static HSHttpRequest getHttpRequest(String name) throws Exception {
-        RequestConfigData requestConfigData = HSHttpHelperXmlConfig.getInstance().getRequestConfigData(name);
+        RequestConfigData requestConfigData = HSHttpHelperXmlConfig.getInstance(ParseWay.ParseRequest.XML).getRequestConfigData(name);
         HSXmlConfigHttpRequest request = new HSXmlConfigHttpRequest(requestConfigData);
         return request;
     }

@@ -34,7 +34,7 @@
         >
 
 
-<!-- 通过xml配置的请求，通过WSHttpRequestFactory根据id获取一个WSHttpRequest类型的实体 -->
+<!-- 通过xml配置的请求，通过HSHttpRequestFactory根据id获取一个WSHttpRequest类型的实体 -->
 <!ELEMENT requests (request+)>
 <!ELEMENT request (parameters?,headers?,handlers?)>
 <!ATTLIST request

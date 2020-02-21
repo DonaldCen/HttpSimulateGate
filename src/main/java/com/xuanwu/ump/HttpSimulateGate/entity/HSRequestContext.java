@@ -318,4 +318,16 @@ public class HSRequestContext {
 
         return str.toString();
     }
+
+    public void setHeaderMap(Map<String, String> headerMap) {
+        this.headerMap = headerMap;
+    }
+
+    public void setParameterDefineList(List<ParameterDefine> parameterDefineList) {
+        this.parameterDefineList = parameterDefineList;
+    }
+
+    public void setCookieMap(Map<String, String> cookieMap) {
+        this.cookieMap = cookieMap;
+    }
 }

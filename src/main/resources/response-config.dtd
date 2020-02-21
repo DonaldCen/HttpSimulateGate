@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!ELEMENT response-config (
+        responses)
+>
+<!ELEMENT responses (response+)>
+<!ELEMENT response (response-clazz,headers?,cookies?)>
+<!ATTLIST response
+        name CDATA #REQUIRED
+        content-type CDATA #REQUIRED
+        description CDATA #IMPLIED
+        charset CDATA #IMPLIED
+>
+<!ELEMENT response-clazz EMPTY>
+<!ATTLIST response-clazz
+        type CDATA #REQUIRED
+        clazz CDATA #REQUIRED
+>
+<!ELEMENT headers (header+)>
+<!ELEMENT header EMPTY>
+<!ATTLIST header
+        name CDATA #REQUIRED
+        value CDATA #REQUIRED
+>
+<!ELEMENT cookies (cookie+)>
+<!ELEMENT cookie EMPTY>
+<!ATTLIST cookie
+        name CDATA #REQUIRED
+        value CDATA #REQUIRED
+>

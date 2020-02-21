@@ -9,21 +9,43 @@ import java.text.MessageFormat;
  * @Version 1.0.0
  */
 public class ErrorMessage {
-    private String message = null;
+    private static final int SUCCESS_STATUS = 0;
 
-    public ErrorMessage() {
+    private String message;
+    private int status;
+
+    private ErrorMessage(){}
+
+    private ErrorMessage(int status,String message){
+        this.message = message;
+        this.status = status;
     }
 
-    public ErrorMessage(String message) {
+    private ErrorMessage success(){
+        return new ErrorMessage(SUCCESS_STATUS,"SUCCESS");
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
         this.message = message;
     }
 
-    public ErrorMessage(String message, Object... var) {
-        this.message = MessageFormat.format(message, var);
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     @Override
     public String toString() {
-        return this.message;
+        return "ErrorMessage{" +
+                "message='" + message + '\'' +
+                ", status=" + status +
+                '}';
     }
 }

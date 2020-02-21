@@ -3,6 +3,7 @@ package com.xuanwu.ump.HttpSimulateGate.entity.config;
 import com.xuanwu.ump.HttpSimulateGate.HSHttpHelperXmlConfig;
 import com.xuanwu.ump.HttpSimulateGate.annotation.HSRequest;
 import com.xuanwu.ump.HttpSimulateGate.annotation.Parameter;
+import com.xuanwu.ump.HttpSimulateGate.common.ParseWay;
 import com.xuanwu.ump.HttpSimulateGate.entity.HSRequestContext;
 import com.xuanwu.ump.HttpSimulateGate.entity.ParameterDefine;
 
@@ -32,7 +33,7 @@ public class RequestConfigData extends HSHttpHelperConfigData {
             context.setUrl(getValue("url"));
         }
         if (StringUtils.isEmpty(getValue("charset"))) {
-            context.setCharset(HSHttpHelperXmlConfig.getInstance().getHttpClientConfig().getHttpCharset());
+            context.setCharset(HSHttpHelperXmlConfig.getInstance(ParseWay.ParseRequest.XML).getHttpClientConfig().getHttpCharset());
         } else {
             context.setCharset(getValue("charset"));
         }

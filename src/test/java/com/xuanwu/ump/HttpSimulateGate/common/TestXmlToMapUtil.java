@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class TestXmlToMapUtil extends TestCase {
     public void testXmlToMap() throws Exception {
-        File xmlFile = new File(XmlUtil.class.getResource(HSHttpHelperXmlConfig.CONFIG_XML_PATH).toURI());
+        File xmlFile = new File(XmlUtil.class.getResource(HSHttpHelperXmlConfig.REQUEST_CONFIG_FILE).toURI());
         Map map = XmlUtil.xmlToMap(xmlFile);
         System.out.print(map);
     }
