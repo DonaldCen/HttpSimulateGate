@@ -51,6 +51,7 @@ public class HSHttpHelperXmlConfig {
 
     //response-config 存放数据 map
     private Map<String, Object> responseConfigData;
+    private Map<String, Object> responses;
 
     public HSHttpHelperXmlConfig() {
     }
@@ -101,6 +102,7 @@ public class HSHttpHelperXmlConfig {
         if (_instance.responseConfigData == null) {
             //1.解析request-config 文件,把数据存放到configData中
             _instance.responseConfigData = parseConfigFileAndPutDataToMap(RESPONSE_CONFIG_FILE);
+            _instance.responses = (Map<String, Object>) _instance.responseConfigData.get("responses");
         }
     }
 

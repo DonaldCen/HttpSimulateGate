@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE response-config SYSTEM "response-config.dtd">
 <response-config>
+    <!-- 一个 responses 只能有一个response,且name 需要唯一,非数字开头，非空-->
     <responses>
-        <response name="" content-type="">
-            <response-clazz type="" clazz=""/>
-        </response>
+        <response name="test" content-type="application/xml" response-clazz="" />
     </responses>
+
 </response-config>
