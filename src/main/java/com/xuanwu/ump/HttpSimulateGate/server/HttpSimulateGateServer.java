@@ -1,5 +1,7 @@
 package com.xuanwu.ump.HttpSimulateGate.server;
 
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -12,10 +14,7 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 public class HttpSimulateGateServer {
     public static void main(String[] args) {
-        ExecutorService bossExecutor = Executors.newCachedThreadPool();
-        ExecutorService workerExecutor = Executors.newCachedThreadPool();
-
-        ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(4);
-
+        new ClassPathXmlApplicationContext("applicationcontext.xml");
+        System.out.println("HttpSimulateGateServer has started.");
     }
 }
