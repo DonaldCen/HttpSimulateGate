@@ -103,6 +103,7 @@ public class HSHttpHelperXmlConfig {
             //1.解析request-config 文件,把数据存放到configData中
             _instance.responseConfigData = parseConfigFileAndPutDataToMap(RESPONSE_CONFIG_FILE);
             _instance.responses = (Map<String, Object>) _instance.responseConfigData.get("responses");
+            Map<String,Object> response = (Map<String, Object>)_instance.responses.get("response");
         }
     }
 

@@ -13,7 +13,6 @@
             </cookies>
         </response>
     </responses>
-
     <responses>
         <response name="test2" response-clazz="com.xuanwu.ump.HttpSimulateGate.entity.ResponseResult">
             <headers>
