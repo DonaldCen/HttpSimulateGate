@@ -12,9 +12,9 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  */
 @XStreamAlias("httpclient-config")
 public class HttpClientConfig {
-    @XStreamImplicit(itemFieldName="http")
+//    @XStreamImplicit(itemFieldName = "http")
     private HttpConfig http;
-    @XStreamImplicit(itemFieldName="pool")
+//    @XStreamImplicit(itemFieldName = "pool")
     private PoolConfig pool;
 
     public HttpConfig getHttp() {

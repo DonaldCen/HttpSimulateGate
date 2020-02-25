@@ -10,7 +10,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @Version 1.0.0
  *
  * clazz CDATA #REQUIRED
- *         type (init|parameter|url|validation|parse|user) "user"
+ * type (init|parameter|url|validation|parse|user) "user"
  */
 @XStreamAlias("handler")
 public class HandlerConfig {

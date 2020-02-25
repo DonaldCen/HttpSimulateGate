@@ -8,19 +8,20 @@ import java.util.List;
 /**
  * @Description
  * @Author <a href="mailto:cenyingqiang@wxchina.com">yingqiang.Cen</a>
- * @Date 2020-02-22
+ * @Date 2020/2/24
  * @Version 1.0.0
  */
-@XStreamAlias("pre")
-public class PreHandlerConfig {
-    @XStreamImplicit(itemFieldName = "handler")
-    private List<HandlerConfig> handler;
+@XStreamAlias("request-xml")
+public class RequestXmlConfig {
 
-    public List<HandlerConfig> getHandler() {
-        return handler;
+    @XStreamImplicit(itemFieldName = "path")
+    private List<PathConfig> path;
+
+    public List<PathConfig> getPath() {
+        return path;
     }
 
-    public void setHandler(List<HandlerConfig> handler) {
-        this.handler = handler;
+    public void setPath(List<PathConfig> path) {
+        this.path = path;
     }
 }

@@ -10,9 +10,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @Version 1.0.0
  *
  * QueueCapacity CDATA #IMPLIED
- *         CorePoolSize CDATA #IMPLIED
- *         MaxPoolSize CDATA #IMPLIED
- *         KeepAliveSeconds CDATA #IMPLIED
+ * CorePoolSize CDATA #IMPLIED
+ * MaxPoolSize CDATA #IMPLIED
+ * KeepAliveSeconds CDATA #IMPLIED
  */
 @XStreamAlias("pool")
 public class PoolConfig {

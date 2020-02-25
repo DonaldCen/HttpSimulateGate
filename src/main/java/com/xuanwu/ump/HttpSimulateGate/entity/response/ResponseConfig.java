@@ -2,6 +2,7 @@ package com.xuanwu.ump.HttpSimulateGate.entity.response;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import com.xuanwu.ump.HttpSimulateGate.entity.XmlConfig;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  */
 
 @XStreamAlias("response-config")
-public class ResponseConfig {
+public class ResponseConfig extends XmlConfig {
     @XStreamImplicit(itemFieldName="responses")
     private List<Responses> responses;
 
@@ -23,5 +24,10 @@ public class ResponseConfig {
 
     public void setResponses(List<Responses> responses) {
         this.responses = responses;
+    }
+
+    @Override
+    public Type getType() {
+        return Type.RESPONSE;
     }
 }

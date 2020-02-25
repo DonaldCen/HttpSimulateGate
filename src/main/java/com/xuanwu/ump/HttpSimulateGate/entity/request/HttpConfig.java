@@ -10,8 +10,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @Version 1.0.0
  *
  * charset CDATA #IMPLIED
- *         connection-timeout CDATA #IMPLIED
- *         socket-timeout CDATA #IMPLIED
+ * connection-timeout CDATA #IMPLIED
+ * socket-timeout CDATA #IMPLIED
  */
 @XStreamAlias("http")
 public class HttpConfig {

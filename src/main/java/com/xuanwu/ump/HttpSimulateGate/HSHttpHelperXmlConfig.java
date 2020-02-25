@@ -1,13 +1,23 @@
 package com.xuanwu.ump.HttpSimulateGate;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.Xpp3DomDriver;
 import com.xuanwu.ump.HttpSimulateGate.common.ConfigXmlFileFilter;
+import com.xuanwu.ump.HttpSimulateGate.common.ListUtil;
 import com.xuanwu.ump.HttpSimulateGate.common.ParseWay.ParseRequest;
 import com.xuanwu.ump.HttpSimulateGate.common.XmlUtil;
+import com.xuanwu.ump.HttpSimulateGate.entity.XmlConfig;
+import com.xuanwu.ump.HttpSimulateGate.entity.XmlConfig.Type;
 import com.xuanwu.ump.HttpSimulateGate.entity.config.HandlerData;
 import com.xuanwu.ump.HttpSimulateGate.entity.config.HttpClientConfig;
 import com.xuanwu.ump.HttpSimulateGate.entity.config.RequestConfigData;
 import com.xuanwu.ump.HttpSimulateGate.entity.config.RequestHandlers;
 import com.xuanwu.ump.HttpSimulateGate.entity.config.RequestXmlPath;
+import com.xuanwu.ump.HttpSimulateGate.entity.request.DefaultHandlers;
+import com.xuanwu.ump.HttpSimulateGate.entity.request.HandlerConfig;
+import com.xuanwu.ump.HttpSimulateGate.entity.request.RequestConfig;
+import com.xuanwu.ump.HttpSimulateGate.entity.request.RequestConfigHelper;
+import com.xuanwu.ump.HttpSimulateGate.entity.response.ResponseConfig;
 import com.xuanwu.ump.HttpSimulateGate.request.handler.HandlerFactory;
 import com.xuanwu.ump.HttpSimulateGate.request.handler.RequestPreHandler;
 import com.xuanwu.ump.HttpSimulateGate.request.handler.ResponseProHandler;
@@ -22,6 +32,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,17 +53,13 @@ public class HSHttpHelperXmlConfig {
     protected static Log log = LogFactory.getLog(HSHttpHelperXmlConfig.class);
 
     //request-config 存放数据 map
-    private Map<String, Object> requestConfigData;
-    private Map<String, RequestConfigData> requestConfigDataMap;
-    private List<RequestConfigData> requestConfigDataList;
-    private HttpClientConfig httpClientConfig;
-    private RequestHandlers defaultHandlers;
+//    private Map<String, Object> requestConfigData;
+    private RequestConfig requestConfig;
+    private RequestConfigHelper requestHelper;
+    private ResponseConfig responseConfig;
+
     private List<RequestPreHandler> defaultPreHandlers;
     private List<ResponseProHandler> defaultProHandlers;
-
-    //response-config 存放数据 map
-    private Map<String, Object> responseConfigData;
-    private Map<String, Object> responses;
 
     public HSHttpHelperXmlConfig() {
     }
@@ -85,70 +93,50 @@ public class HSHttpHelperXmlConfig {
     }
 
     private static void parseRequestConfig() throws Exception {
-        if (_instance.requestConfigData == null) {
-            //1.解析request-config 文件,把数据存放到configData中
-            _instance.requestConfigData = parseConfigFileAndPutDataToMap(REQUEST_CONFIG_FILE);
-            //2.解析 httpClientConfig
-            _instance.httpClientConfig = new HttpClientConfig((Map) _instance.requestConfigData.get("httpclient-config"));
-            //3.解析 defaultHandlers
-            _instance.defaultHandlers = new RequestHandlers((Map) _instance.requestConfigData.get("default-handlers"));
-            //4.解析 requests
-            _instance.requestConfigDataMap = new HashMap<String, RequestConfigData>();
-            _instance.requestListInit();
+        if (_instance.requestConfig == null) {
+            //解析request-config 文件,把数据存放到requestConfig中
+            _instance.requestConfig = (RequestConfig)getConfigByUrl(REQUEST_CONFIG_FILE,Type.REQUEST);
+            _instance.requestHelper = new RequestConfigHelper(_instance.requestConfig);
         }
     }
 
     private static void parseResponseConfig() throws Exception {
-        if (_instance.responseConfigData == null) {
+        if (_instance.responseConfig == null) {
             //1.解析request-config 文件,把数据存放到configData中
-            _instance.responseConfigData = parseConfigFileAndPutDataToMap(RESPONSE_CONFIG_FILE);
-            _instance.responses = (Map<String, Object>) _instance.responseConfigData.get("responses");
-            Map<String,Object> response = (Map<String, Object>)_instance.responses.get("response");
+            _instance.responseConfig = (ResponseConfig)getConfigByUrl(RESPONSE_CONFIG_FILE,Type.RESPONSE);
+
         }
     }
 
-    private static Map<String, Object> parseConfigFileAndPutDataToMap(String url) throws Exception {
-        File xmlFile = new File(XmlUtil.class.getResource(url).toURI());
-        return XmlUtil.xmlToMap(xmlFile);
+    private static XmlConfig getConfigByUrl(String url,Type type) throws Exception {
+        XStream xStream = new XStream(new Xpp3DomDriver());
+        String path = HSHttpHelperXmlConfig.class.
+                getResource(url).toURI().getPath();
+        File file = new File(path);
+        InputStream stream = new FileInputStream(file);
+        if(type == Type.REQUEST){
+            xStream.processAnnotations(RequestConfig.class);
+            return (RequestConfig)xStream.fromXML(stream);
+        }else {
+            xStream.processAnnotations(ResponseConfig.class);
+            return (ResponseConfig)xStream.fromXML(stream);
+        }
     }
 
-
-    public Map<String, Object> getConfigData() {
-        return requestConfigData;
-    }
-
-    public HttpClientConfig getHttpClientConfig() {
-        return httpClientConfig;
-    }
 
     public String getCharset() {
-        if (getHttpClientConfig() == null) {
-            return "utf-8";
-        }
-        return StringUtils.isBlank(getHttpClientConfig().getHttpCharset()) ?
-                "utf-8" :
-                getHttpClientConfig().getHttpCharset();
+        return _instance.requestHelper.getCharset();
     }
+
 
     public List<ResponseProHandler> getDefaultProHandlers() throws Exception {
         if (defaultProHandlers == null) {
             defaultProHandlers = new ArrayList<ResponseProHandler>();
-            List<HandlerData> proHandlerList = defaultHandlers.getProHandlers();
-            // 前处理把相同类型整理为列表，支持配置多个相同类型的处理器
+            DefaultHandlers defaultHandlers = _instance.requestHelper.getDefaultHandlers();
             Map<String, List<String>> proHandlerMap = new HashMap<String, List<String>>();
-            if (proHandlerList != null) {
-                for (HandlerData handlerData : proHandlerList) {
-                    String clazz = handlerData.getClazz();
-                    String type = handlerData.getType();
-                    if (proHandlerMap.containsKey(type)) {
-                        List<String> list = proHandlerMap.get(type);
-                        list.add(clazz);
-                    } else {
-                        List<String> list = new ArrayList<String>();
-                        list.add(clazz);
-                        proHandlerMap.put(type, list);
-                    }
-                }
+            if(defaultHandlers != null){
+                List<HandlerConfig> proHandlerList = defaultHandlers.getProHandlerData(defaultHandlers);
+                setHandlerConfigToMap(proHandlerList,proHandlerMap);
             }
             // 若用户没有配置必须的处理器，使用默认的
             String[] proHandlerTypeList = {"parse", "user"};
@@ -177,29 +165,32 @@ public class HSHttpHelperXmlConfig {
     public List<RequestPreHandler> getDefaultPreHandlers() throws Exception {
         if (defaultPreHandlers == null) {
             defaultPreHandlers = new ArrayList<RequestPreHandler>();
-            List<HandlerData> preHandlerList = defaultHandlers.getPreHandlers();
-            // 前处理把相同类型整理为列表，支持配置多个相同类型的处理器
-            Map<String, List<String>> preHandlerMap = new HashMap<String, List<String>>();
+            DefaultHandlers defaultHandlers = _instance.requestHelper.getDefaultHandlers();
+            if(defaultHandlers != null){
+                List<HandlerConfig> preHandlerList = defaultHandlers.getPreHandlerData(defaultHandlers);
+                // 前处理把相同类型整理为列表，支持配置多个相同类型的处理器
+                Map<String, List<String>> preHandlerMap = new HashMap<String, List<String>>();
 
-            setUserPreHandlerList(preHandlerList, preHandlerMap);
+                setHandlerConfigToMap(preHandlerList, preHandlerMap);
 
-            setDefaultPreHandlerList(preHandlerMap);
+                setDefaultPreHandlerList(preHandlerMap);
+            }
         }
         return defaultPreHandlers;
     }
 
-    private void setUserPreHandlerList(List<HandlerData> preHandlerList, Map<String, List<String>> preHandlerMap) {
-        if (preHandlerList != null) {
-            for (HandlerData handlerData : preHandlerList) {
-                String clazz = handlerData.getClazz();
-                String type = handlerData.getType();
-                if (preHandlerMap.containsKey(type)) {
-                    List<String> list = preHandlerMap.get(type);
+    private void setHandlerConfigToMap(List<HandlerConfig> handlerConfigs, Map<String, List<String>> handlerMap) {
+        if (ListUtil.isNotBlank(handlerConfigs)) {
+            for (HandlerConfig config : handlerConfigs) {
+                String clazz = config.getClazz();
+                String type = config.getType();
+                if (handlerMap.containsKey(type)) {
+                    List<String> list = handlerMap.get(type);
                     list.add(clazz);
                 } else {
                     List<String> list = new ArrayList<String>();
                     list.add(clazz);
-                    preHandlerMap.put(type, list);
+                    handlerMap.put(type, list);
                 }
             }
         }
@@ -240,104 +231,6 @@ public class HSHttpHelperXmlConfig {
         }
     }
 
-    private void requestListInit() throws Exception {
-        if (requestConfigDataList == null) {
-            requestConfigDataList = new ArrayList<RequestConfigData>();
-
-            //解析 requests项
-            parseRequestsConfig();
-
-            parseRequestXmlConfig();
-
-            for (RequestConfigData requestConfigData : requestConfigDataList) {
-                requestConfigDataMap.put(requestConfigData.getValue("name"), requestConfigData);
-            }
-        }
-    }
-
-    /**
-     * 解析 requests 项
-     */
-    private void parseRequestsConfig() {
-        if (this.requestConfigData.containsKey("requests")) {
-            Object obj = ((Map) this.requestConfigData.get("requests")).get("request");
-            if (obj instanceof List) {
-                List<Map<String, Object>> list = (List<Map<String, Object>>) obj;
-                if (list != null) {
-                    for (Map<String, Object> map : list) {
-                        requestConfigDataList.add(new RequestConfigData(map));
-                    }
-                }
-            } else if (obj instanceof Map) {
-                requestConfigDataList.add(new RequestConfigData((Map) obj));
-            }
-
-        }
-    }
-
-    /**
-     * 解析 request-xml 项
-     */
-    private void parseRequestXmlConfig() throws Exception {
-        if (this.requestConfigData.containsKey("request-xml")) {
-            List<Map> mapList = new ArrayList<Map>();
-            Object obj = ((Map) this.requestConfigData.get("request-xml")).get("path");
-            if (obj instanceof List) {
-                mapList.addAll((List) obj);
-            } else if (obj instanceof Map) {
-                mapList.add((Map) obj);
-            }
-            List<String> xmlPathList = new ArrayList<String>();
-            if (!mapList.isEmpty()) {
-                for (Map map : mapList) {
-                    RequestXmlPath pathData = new RequestXmlPath(map);
-                    String path = pathData.getPath();
-                    if (!StringUtils.isEmpty(path)) {
-                        xmlPathList.addAll(parsePath(path));
-                    }
-                }
-            }
-            // 解析xml
-            for (String xmlPath : xmlPathList) {
-                File xmlFile = new File(xmlPath);
-                if (xmlFile.exists()) {
-                    Object xmlConfigObj = XmlUtil.xmlToMap(xmlFile);
-                    if (xmlConfigObj instanceof Map) {
-                        Map<String, Object> xmlConfigMap = (Map) xmlConfigObj;
-                        if (xmlConfigMap.containsKey("requests")) {
-                            Object obj2 = ((Map) xmlConfigMap.get("requests")).get("request");
-                            if (obj2 instanceof List) {
-                                List<Map<String, Object>> list = (List<Map<String, Object>>) obj2;
-                                if (list != null) {
-                                    for (Map<String, Object> requestMap : list) {
-                                        requestConfigDataList.add(new RequestConfigData(requestMap));
-                                    }
-                                }
-                            } else if (obj2 instanceof Map) {
-                                requestConfigDataList.add(new RequestConfigData((Map) obj2));
-                            }
-
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public RequestConfigData getRequestConfigData(String name) {
-        if (requestConfigDataMap.containsKey(name)) {
-            return requestConfigDataMap.get(name);
-        } else {
-            return null;
-        }
-    }
-
-    public List<RequestConfigData> getRequestConfigDataList() throws Exception, URISyntaxException {
-        if (requestConfigDataList == null) {
-            requestListInit();
-        }
-        return requestConfigDataList;
-    }
 
     /**
      * 解析指定路径下所有xml

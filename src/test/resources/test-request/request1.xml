@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE httphelper-config SYSTEM "HttpSimulateGate-config.dtd">
-<httphelper-config>
+<!DOCTYPE request-config SYSTEM "HttpSimulateGate-config.dtd">
+<request-config>
     <requests>
         <request name="downloadImage" url="http://image.baidu.com/search/index" charset="UTF-8" response-type="HTML">
             <parameters>
@@ -21,4 +21,4 @@
             </handlers>
         </request>
     </requests>
-</httphelper-config>
+</request-config>

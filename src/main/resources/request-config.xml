@@ -16,4 +16,13 @@
             <handler type="parse" clazz="com.xuanwu.ump.HttpSimulateGate.request.handler.impl.pro.DefaultResultParseHandlerImpl"/>
         </pro>
     </default-handlers>
+    <requests>
+        <request name="test1" url="http://news.baidu.com/" charset="GBK">
+        </request>
+    </requests>
+    <request-xml>
+        <path value="/test-request/**"/>
+        <path value="/test-request1/**"/>
+        <path value="/test-request3/**"/>
+    </request-xml>
 </request-config>

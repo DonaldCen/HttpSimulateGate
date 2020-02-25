@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class TestXmlUtil extends TestCase {
     public void testHttpHelperConfig() throws Exception {
-        File xmlFile = new File(XmlUtil.class.getResource("/httphelper-config.xml").toURI());
+        File xmlFile = new File(XmlUtil.class.getResource("/request-config.xml").toURI());
         String xml = FileUtils.readFileToString(xmlFile);
         Map map = XmlUtil.xmlToMap(xml);
         Map clientMap = (Map) map.get("httpclient-config");

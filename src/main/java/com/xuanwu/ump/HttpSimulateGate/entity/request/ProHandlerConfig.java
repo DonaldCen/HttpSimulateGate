@@ -13,7 +13,7 @@ import java.util.List;
  */
 @XStreamAlias("pro")
 public class ProHandlerConfig {
-    @XStreamImplicit(itemFieldName="handler")
+    @XStreamImplicit(itemFieldName = "handler")
     private List<HandlerConfig> handler;
 
     public List<HandlerConfig> getHandler() {

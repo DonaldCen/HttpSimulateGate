@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- httphelper-config.xml配置文件DTD，必须放在classpath下，可以指定请求的xml路径，请求xml文件名称可以自定义 -->
-<!ELEMENT httphelper-config (
+<!ELEMENT request-config (
         httpclient-config?,
         default-handlers?,
         requests?,

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE httphelper-config SYSTEM "request-config.dtd">
-<httphelper-config>
+<!DOCTYPE request-config SYSTEM "request-config.dtd">
+<request-config>
     <httpclient-config>
-        <http charset="UTF-8" connection-timeout="15000" socket-timeout="15000"/>
+        <http charset="utf-8" connection-timeout="15000" socket-timeout="15000"/>
         <pool QueueCapacity="150" MaxPoolSize="100" CorePoolSize="50" KeepAliveSeconds="300"/>
     </httpclient-config>
     <default-handlers>
@@ -22,6 +22,8 @@
         </request>
     </requests>
     <request-xml>
-        <path value="/test-request/**"/>
+        <path value="/test-request1/**"/>
+        <path value="/test-request2/**"/>
+        <path value="/test-request3/**"/>
     </request-xml>
-</httphelper-config>
+</request-config>
