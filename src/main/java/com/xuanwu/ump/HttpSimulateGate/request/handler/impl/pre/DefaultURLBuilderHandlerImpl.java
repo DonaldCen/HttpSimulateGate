@@ -4,6 +4,8 @@ import com.xuanwu.ump.HttpSimulateGate.HSHttpHelperConstant;
 import com.xuanwu.ump.HttpSimulateGate.entity.HSRequestContext;
 import com.xuanwu.ump.HttpSimulateGate.request.handler.RequestPreHandler;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +24,9 @@ public class DefaultURLBuilderHandlerImpl implements RequestPreHandler {
     @Override
     public boolean handler(HSRequestContext context) throws Exception {
         String url = context.getUrl();
+        if(StringUtils.isBlank(url)){
+            return true;
+        }
         Pattern pattern = Pattern.compile("(\\{([^&/\\}]+)\\})");
         Matcher matcher = pattern.matcher(url);
         String key = null, value = null;

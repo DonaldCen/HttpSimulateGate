@@ -2,12 +2,16 @@ package com.xuanwu.ump.HttpSimulateGate.request;
 
 import com.xuanwu.ump.HttpSimulateGate.HSHttpHelperXmlConfig;
 import com.xuanwu.ump.HttpSimulateGate.common.MapKeyComparator;
+import com.xuanwu.ump.HttpSimulateGate.entity.ErrorMessage;
 import com.xuanwu.ump.HttpSimulateGate.entity.HSRequestContext;
 import com.xuanwu.ump.HttpSimulateGate.entity.ParameterDefine;
 import com.xuanwu.ump.HttpSimulateGate.entity.ResponseResult;
+import com.xuanwu.ump.HttpSimulateGate.entity.response.Response;
+import com.xuanwu.ump.HttpSimulateGate.http.HSHttpTaskExecutor;
 import com.xuanwu.ump.HttpSimulateGate.request.handler.RequestPreHandler;
 import com.xuanwu.ump.HttpSimulateGate.request.handler.ResponseProHandler;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -25,6 +29,7 @@ import java.util.TreeMap;
  */
 public abstract class SimulateGateHttpRequest {
     protected static Log log = LogFactory.getLog(SimulateGateHttpRequest.class);
+    protected String responseName;
     /**
      * 前置处理handler
      */
@@ -40,7 +45,7 @@ public abstract class SimulateGateHttpRequest {
     /**
      * 参数列表
      */
-    private List<ParameterDefine> parameterDefineList = null;
+    private Map<String,Object> parameterDefineList = null;
     /**
      * cookie列表
      */
@@ -53,7 +58,7 @@ public abstract class SimulateGateHttpRequest {
     /**
      * 添加参数
      */
-    public abstract List<ParameterDefine> addParameters();
+    public abstract Map<String,Object> addParameters();
 
     /**
      * 添加请求头部。
@@ -65,15 +70,30 @@ public abstract class SimulateGateHttpRequest {
      */
     public abstract Map<String, String> addCookies();
 
-    private void builderContext() {
+    private void builderContext() throws Exception {
         parameterDefineList = addParameters();
         cookieMap = addCookies();
         headerMap = addHeaders();
         context = new HSRequestContext();
 
-        context.setParameterDefineList(parameterDefineList);
+        context.setParameterDefineList(parseParameterFromMap(parameterDefineList));
         context.setCookieMap(cookieMap);
         context.setHeaderMap(headerMap);
+
+        Response response = HSHttpHelperXmlConfig.getInstance().getResponseByName(responseName);
+        context.setResponse(response);
+
+    }
+
+    private List<ParameterDefine> parseParameterFromMap(Map<String,Object> paramMap){
+        List<ParameterDefine> list = new ArrayList<ParameterDefine>();
+        for(String key:paramMap.keySet()){
+            ParameterDefine define = new ParameterDefine();
+            define.setName(key);
+            define.setDefaultValue((String) paramMap.get(key));
+            list.add(define);
+        }
+        return list;
     }
 
     private boolean preRequest() throws Exception {
@@ -149,7 +169,34 @@ public abstract class SimulateGateHttpRequest {
         ResponseResult result = null;
         try {
             if (!preRequest()) {
-
+                // 出现错误：获取错误消息并返回
+                result = new ResponseResult();
+                result.setStatus(999);
+                List<ErrorMessage> errorMessageList = context.getErrorMessageList();
+                StringBuffer error = new StringBuffer();
+                for (ErrorMessage message : errorMessageList) {
+                    error.append(message);
+                }
+                result.setBody(error.toString());
+                return result;
+            }
+            result = new ResponseResult();
+            result.setStatus(0);
+            result.setBody("success");
+            // 执行请求
+//            String uuid = HSHttpTaskExecutor.getInstance().execute(context);
+//            // 获取执行结果
+//            result = HSHttpTaskExecutor.getInstance().getResult(uuid);
+            // 执行后处理
+            Set<Integer> proKeySet = responseProHandlerListMap.keySet();
+            // 从小到大以此执行
+            for (Integer key : proKeySet) {
+                List<ResponseProHandler> list = responseProHandlerListMap.get(key);
+                if (list != null) {
+                    for (ResponseProHandler handler : list) {
+                        result = handler.handler(context, result);
+                    }
+                }
             }
         } catch (Exception e) {
             log.error("execute error..", e);

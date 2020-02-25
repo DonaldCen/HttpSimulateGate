@@ -1,6 +1,9 @@
 package com.xuanwu.ump.HttpSimulateGate.channel;
 
 
+import com.xuanwu.ump.HttpSimulateGate.entity.ResponseResult;
+import com.xuanwu.ump.HttpSimulateGate.request.impl.DefaultSimulateGateHttpRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +32,16 @@ import io.netty.handler.codec.http.HttpVersion;
  */
 @Sharable
 public class HttpChannelHandler extends ChannelDuplexHandler {
+    private String responseName;
+
+    public String getResponseName() {
+        return responseName;
+    }
+
+    public void setResponseName(String responseName) {
+        this.responseName = responseName;
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(HttpChannelHandler.class);
 
 
@@ -38,16 +51,19 @@ public class HttpChannelHandler extends ChannelDuplexHandler {
 
         logger.info("receive from {}", ctx.channel().remoteAddress());
 
-        byte[] dst = ByteBufUtil.getBytes(httpReq.content());
-        String content = new String(dst,"utf-8");
+        DefaultSimulateGateHttpRequest defaultRequest = new DefaultSimulateGateHttpRequest(httpReq,responseName);
+        ResponseResult result = defaultRequest.execute();
 
-        sendResp(ctx, content);
+        sendResp(ctx, result);
 
     }
 
-    private void sendResp(ChannelHandlerContext ctx, String result) {
+    private void sendResp(ChannelHandlerContext ctx, ResponseResult result) {
         HttpResponse resp;
-        resp = createResp(result.getBytes(), "text/html", HttpResponseStatus.OK);
+        String resultBody = (String) result.getBody();
+        resp = createResp(resultBody.getBytes(),
+                result.getResponseType().getContentType(),
+                HttpResponseStatus.OK);
         ChannelFuture f = ctx.channel().writeAndFlush(resp);
         f.addListener(ChannelFutureListener.CLOSE);
     }

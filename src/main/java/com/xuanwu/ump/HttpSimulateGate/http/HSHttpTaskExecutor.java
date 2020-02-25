@@ -31,12 +31,11 @@ public class HSHttpTaskExecutor {
 
     public static HSHttpTaskExecutor getInstance() throws Exception {
         if (_instance.threadPool == null) {
-            HttpClientConfig httpClientConfig = HSHttpHelperXmlConfig.getInstance().getHttpClientConfig();
-            _instance.threadPool = new ThreadPoolExecutor(httpClientConfig.getCorePoolSize(),
-                    httpClientConfig.getPoolMaxPoolSize(),
-                    httpClientConfig.getKeepAliveSeconds(),
+            _instance.threadPool = new ThreadPoolExecutor(HSHttpHelperXmlConfig.getInstance().getCorePoolSize(),
+                    HSHttpHelperXmlConfig.getInstance().getMaxPoolSize(),
+                    HSHttpHelperXmlConfig.getInstance().getKeepAliveSeconds(),
                     TimeUnit.SECONDS,
-                    new ArrayBlockingQueue<Runnable>(httpClientConfig.getPoolQueueCapacity()),
+                    new ArrayBlockingQueue<Runnable>(HSHttpHelperXmlConfig.getInstance().getQueueCapacity()),
                     new ThreadPoolExecutor.CallerRunsPolicy());
         }
         return _instance;

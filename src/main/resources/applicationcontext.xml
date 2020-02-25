@@ -29,6 +29,7 @@
 		<property name="port" value="${http.simulate.gate.port}"></property>
 		<property name="handler">
 			<bean class="com.xuanwu.ump.HttpSimulateGate.channel.HttpChannelHandler">
+				<property name="responseName" value="${http.responses.response.name}"></property>
 			</bean>
 		</property>
 	</bean>

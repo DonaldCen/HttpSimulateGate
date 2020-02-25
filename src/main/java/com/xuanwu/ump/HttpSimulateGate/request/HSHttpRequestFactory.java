@@ -11,8 +11,8 @@ import com.xuanwu.ump.HttpSimulateGate.entity.config.RequestConfigData;
  */
 public class HSHttpRequestFactory {
     public static HSHttpRequest getHttpRequest(String name) throws Exception {
-        RequestConfigData requestConfigData = HSHttpHelperXmlConfig.getInstance().getRequestConfigData(name);
-        HSXmlConfigHttpRequest request = new HSXmlConfigHttpRequest(requestConfigData);
-        return request;
+//        RequestConfigData requestConfigData = HSHttpHelperXmlConfig.getInstance().getRequestConfigData(name);
+//        HSXmlConfigHttpRequest request = new HSXmlConfigHttpRequest(requestConfigData);
+        return null;
     }
 }

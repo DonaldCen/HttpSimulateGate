@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.xuanwu.ump.HttpSimulateGate.annotation.HSRequest;
+import com.xuanwu.ump.HttpSimulateGate.entity.response.Response;
 
 /**
  * @Description
@@ -42,7 +43,7 @@ public class HSRequestContext {
      */
     private HSRequest.MethodType method;
 
-    private HSRequest.ContentType contentType;
+    private ContentType contentType;
     /**
      * 相应类型
      */
@@ -75,6 +76,19 @@ public class HSRequestContext {
      * 返回值类型：用于自动解析
      */
     private Class<?> resultClass;
+    /**
+     * response配置
+     */
+    private Response response;
+
+
+    public Response getResponse() {
+        return response;
+    }
+
+    public void setResponse(Response response) {
+        this.response = response;
+    }
 
     public HSRequestContext() {
         headerMap = new HashMap<String, String>();
@@ -141,11 +155,11 @@ public class HSRequestContext {
         return this;
     }
 
-    public HSRequest.ContentType getContentType() {
+    public ContentType getContentType() {
         return contentType;
     }
 
-    public HSRequestContext setContentType(HSRequest.ContentType type){
+    public HSRequestContext setContentType(ContentType type){
         this.contentType = type;
         return this;
     }

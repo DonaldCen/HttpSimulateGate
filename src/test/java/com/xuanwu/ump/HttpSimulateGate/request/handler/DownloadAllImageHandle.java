@@ -27,7 +27,7 @@ public class DownloadAllImageHandle implements ResponseProHandler {
         System.out.println(savePath);
         int i = 0;
         while (matcher.find()) {
-            String imageUrl = matcher.group(1);
+            /*String imageUrl = matcher.group(1);
             HSHttpRequest request = HSHttpRequestFactory.getHttpRequest("saveImageRequest");
 
             request.getContext().addInputData("savePath", savePath + i + ".jpg");
@@ -35,7 +35,7 @@ public class DownloadAllImageHandle implements ResponseProHandler {
             // 同步下载
             //request.execute();
             // 异步下载：多个下载请求同时进行
-            request.asyncExecute();
+            request.asyncExecute();*/
 
             i++;
         }

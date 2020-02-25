@@ -32,7 +32,7 @@ public class RequestConfigData extends HSHttpHelperConfigData {
             context.setUrl(getValue("url"));
         }
         if (StringUtils.isEmpty(getValue("charset"))) {
-            context.setCharset(HSHttpHelperXmlConfig.getInstance().getHttpClientConfig().getHttpCharset());
+            context.setCharset(HSHttpHelperXmlConfig.getInstance().getCharset());
         } else {
             context.setCharset(getValue("charset"));
         }

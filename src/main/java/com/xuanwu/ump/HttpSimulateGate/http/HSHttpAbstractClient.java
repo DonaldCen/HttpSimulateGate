@@ -167,9 +167,8 @@ public abstract class HSHttpAbstractClient {
         if (context.getUrl().startsWith("https")) {
             wrapClient();
         }
-        HttpClientConfig httpClientConfig = HSHttpHelperXmlConfig.getInstance().getHttpClientConfig();
-        this.httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, httpClientConfig.getConnectionTimeout());
-        this.httpClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, httpClientConfig.getSocketTimeout());
+        this.httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, HSHttpHelperXmlConfig.getInstance().getConnectTimeout());
+        this.httpClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, HSHttpHelperXmlConfig.getInstance().getSocKetTimeout());
         // 初始化
         buildHttpRequest();
         log.debug(context);

@@ -1,5 +1,7 @@
 package com.xuanwu.ump.HttpSimulateGate.annotation;
 
+import com.xuanwu.ump.HttpSimulateGate.entity.ContentType;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -96,36 +98,4 @@ public @interface HSRequest {
         DELETE
     }
 
-    /**
-     * 常见 Content Type
-     */
-    enum ContentType {
-        XML(0,"application/xml"),
-        JSON(1,"application/json"),
-        FROM_URL_ENCODE(2,"application/x-www-form-urlencoded"),
-        FROM_DATA(3,"multipart/form-data")
-        ;
-        private ContentType(int index,String contentType){
-            this.index = index;
-            this.contentType = contentType;
-        }
-        private int index;
-        private String contentType;
-
-        public int getIndex() {
-            return index;
-        }
-
-        public void setIndex(int index) {
-            this.index = index;
-        }
-
-        public String getContentType() {
-            return contentType;
-        }
-
-        public void setContentType(String contentType) {
-            this.contentType = contentType;
-        }
-    }
 }

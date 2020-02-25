@@ -17,7 +17,9 @@ import com.xuanwu.ump.HttpSimulateGate.entity.request.DefaultHandlers;
 import com.xuanwu.ump.HttpSimulateGate.entity.request.HandlerConfig;
 import com.xuanwu.ump.HttpSimulateGate.entity.request.RequestConfig;
 import com.xuanwu.ump.HttpSimulateGate.entity.request.RequestConfigHelper;
+import com.xuanwu.ump.HttpSimulateGate.entity.response.Response;
 import com.xuanwu.ump.HttpSimulateGate.entity.response.ResponseConfig;
+import com.xuanwu.ump.HttpSimulateGate.entity.response.Responses;
 import com.xuanwu.ump.HttpSimulateGate.request.handler.HandlerFactory;
 import com.xuanwu.ump.HttpSimulateGate.request.handler.RequestPreHandler;
 import com.xuanwu.ump.HttpSimulateGate.request.handler.ResponseProHandler;
@@ -108,6 +110,23 @@ public class HSHttpHelperXmlConfig {
         }
     }
 
+    public Response getResponseByName(String name){
+        List<Responses> list = _instance.responseConfig.getResponses();
+        if(ListUtil.isNotBlank(list)){
+            for(Responses r:list){
+                List<Response> responses = r.getResponse();
+                if(ListUtil.isNotBlank(responses)){
+                    for(Response subResp:responses){
+                        if(name.equals(subResp.getName())){
+                            return subResp;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     private static XmlConfig getConfigByUrl(String url,Type type) throws Exception {
         XStream xStream = new XStream(new Xpp3DomDriver());
         String path = HSHttpHelperXmlConfig.class.
@@ -127,6 +146,31 @@ public class HSHttpHelperXmlConfig {
     public String getCharset() {
         return _instance.requestHelper.getCharset();
     }
+
+    public String getConnectTimeout(){
+        return _instance.requestHelper.getConnectTimeout();
+    }
+    public String getSocKetTimeout(){
+        return _instance.requestHelper.getSocKetTimeout();
+    }
+
+    public int getKeepAliveSeconds(){
+        return _instance.requestHelper.getKeepAliveSeconds();
+    }
+
+    public int getCorePoolSize(){
+        return _instance.requestHelper.getCorePoolSize();
+    }
+
+    public int getMaxPoolSize(){
+        return _instance.requestHelper.getMaxPoolSize();
+    }
+
+    public int getQueueCapacity(){
+        return _instance.requestHelper.getQueueCapacity();
+    }
+
+
 
 
     public List<ResponseProHandler> getDefaultProHandlers() throws Exception {

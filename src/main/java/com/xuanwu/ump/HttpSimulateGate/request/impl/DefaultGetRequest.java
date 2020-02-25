@@ -1,6 +1,7 @@
 package com.xuanwu.ump.HttpSimulateGate.request.impl;
 
 import com.xuanwu.ump.HttpSimulateGate.annotation.HSRequest;
+import com.xuanwu.ump.HttpSimulateGate.entity.ContentType;
 import com.xuanwu.ump.HttpSimulateGate.entity.HSRequestContext;
 import com.xuanwu.ump.HttpSimulateGate.request.HSAnnotationHttpRequest;
 
@@ -11,7 +12,7 @@ import com.xuanwu.ump.HttpSimulateGate.request.HSAnnotationHttpRequest;
  * @Version 1.0.0
  */
 @HSRequest(
-        name = "默认GET请求", url = "{url}", method = HSRequest.MethodType.GET,contentType = HSRequest.ContentType.JSON
+        name = "默认GET请求", url = "{url}", method = HSRequest.MethodType.GET,contentType = ContentType.JSON
 )
 public class DefaultGetRequest extends HSAnnotationHttpRequest {
     @Override

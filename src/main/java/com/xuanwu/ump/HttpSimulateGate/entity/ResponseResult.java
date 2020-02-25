@@ -10,6 +10,7 @@ public class ResponseResult {
     private Object body = null;
     private int status = -1;
     private long wasteTime = 0;
+    private ContentType responseType;
 
     public Object getBody() {
         return body;
@@ -41,5 +42,13 @@ public class ResponseResult {
 
     public void setWasteTime(long wasteTime) {
         this.wasteTime = wasteTime;
+    }
+
+    public ContentType getResponseType() {
+        return responseType;
+    }
+
+    public void setResponseType(ContentType responseType) {
+        this.responseType = responseType;
     }
 }

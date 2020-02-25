@@ -21,6 +21,10 @@ public class ErrorMessage {
         this.status = status;
     }
 
+    public ErrorMessage(String message, Object... var) {
+        this.message = MessageFormat.format(message, var);
+    }
+
     private ErrorMessage success(){
         return new ErrorMessage(SUCCESS_STATUS,"SUCCESS");
     }

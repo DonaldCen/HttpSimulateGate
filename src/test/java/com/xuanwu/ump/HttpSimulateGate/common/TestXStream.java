@@ -44,5 +44,7 @@ public class TestXStream extends TestCase {
         InputStream stream = new FileInputStream(file);
         RequestConfig requestConfig = (RequestConfig)xStream.fromXML(stream);
         System.out.println(JSON.toJSONString(requestConfig));
+
+        xStream.toXML(requestConfig);
     }
 }

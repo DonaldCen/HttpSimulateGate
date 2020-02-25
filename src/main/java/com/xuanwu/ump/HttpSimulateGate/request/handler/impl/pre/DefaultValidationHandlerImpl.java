@@ -35,20 +35,26 @@ public class DefaultValidationHandlerImpl implements RequestPreHandler {
                 String value = String.valueOf(context.getInputDataMap().get(name));
                 // 验证非空
                 if (required && StringUtils.isEmpty(value)) {
-
+                    context.addValidationResult(
+                            new ErrorMessage("参数[{0}({1})]，不能为空。",
+                                    parameterDefine.getName(), parameterDefine.getDescription()));
                 }
                 // 验证数字类型
                 if (parameterDefine.getType() == Parameter.Type.INT && !StringUtils.isBlank(value)) {
                     try {
                         Integer.valueOf(value);
                     } catch (NumberFormatException e) {
-
+                        context.addValidationResult(
+                                new ErrorMessage("参数[{0}]类型为INT，输入为[{1}]，转换失败。",
+                                        parameterDefine.getName(), value));
                     }
                 }
                 // 验证正则
                 String regex = parameterDefine.getValidateRegex();
                 if (!StringUtils.isBlank(value) && !StringUtils.isBlank(regex) && !Pattern.matches(regex, value)) {
-
+                    context.addValidationResult(
+                            new ErrorMessage("参数[{0}]，输入为[{1}]，正则表达式[{2}]验证失败。",
+                                    parameterDefine.getName(), value, parameterDefine.getValidateRegex()));
                 }
             }
         }
